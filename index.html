@@ -2,11 +2,53 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Catálogo de Conciertos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Recitales</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Catálogo de Conciertos</h1>
-  <p>Aplicación para encontrar recitales y conciertos en tu zona 🎶</p>
+  <header>
+    <h1>🎶 Catálogo de Recitales</h1>
+    <nav>
+      <ul>
+        <li><a href="#">Inicio</a></li>
+        <li><a href="#">Buscar</a></li>
+        <li><a href="#">Favoritos</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Buscador -->
+    <section id="buscador">
+      <h2>Buscar conciertos</h2>
+      <form>
+        <input type="text" placeholder="Artista" required>
+        <input type="text" placeholder="Ciudad o zona">
+        <button type="submit">🔍 Buscar</button>
+      </form>
+    </section>
+
+    <!-- Catálogo de conciertos -->
+    <section id="catalogo">
+      <h2>Próximos eventos</h2>
+      <div class="evento">
+        <h3>Arctic Monkeys</h3>
+        <p>📍 Buenos Aires - 12/10/2025</p>
+        <a href="https://www.ticketek.com.ar" target="_blank">Comprar entrada</a>
+        <button>⭐ Agregar a Favoritos</button>
+      </div>
+      <div class="evento">
+        <h3>Fito Páez</h3>
+        <p>📍 Rosario - 20/11/2025</p>
+        <a href="https://www.allaccess.com.ar" target="_blank">Comprar entrada</a>
+        <button>⭐ Agregar a Favoritos</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Catálogo de Recitales - Proyecto académico</p>
+  </footer>
 </body>
 </html>

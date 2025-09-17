@@ -14,58 +14,22 @@
 </head>
 <body>
   <header>
-    <h1>🎶 Recitales en Argentina 🎶</h1>
+    <div class = "logo">
+      <img src = "RecitalApp-logo.jpg" alt = "RecitalApp" />
+    </div>
     <nav>
+      <div id = "menuHamburguesa">&#9776;</div>
       <ul>
         <li><a href="#">Inicio</a></li>
-        <li><a href="#">Buscar</a></li>
+        <li><a href="#" id = "abrirBuscador">Buscar</a></li>
+        <li><a href="#">Entradas</a></li>
+        <li><a href="#">Conciertos</a></li>
         <li><a href="#">Favoritos</a></li>
+        <li><a href="#">Cómo llegar</a></li>
       </ul>
     </nav>
   </header>
-
   <main>
-    <!-- Buscador -->
-    <section id = "buscador">
-      <h2>Buscar conciertos</h2>
-      <form id = "form-buscador">
-        <!-- Ingresar artista -->
-        <input type = "text" id = "artista" placeholder = "Artista">
-        <!--Seleccionar provincia-->
-        <select id = "provincia">
-          <option value = "todas">Todas</option>
-          <option value = "Buenos Aires">Buenos Aires</option>
-          <option value = "Ciudad Autónoma de Buenos Aires">Ciudad Autónoma de Buenos Aires</option>
-          <option value = "Catamarca">Catamarca</option>
-          <option value = "Chaco">Chaco</option>
-          <option value = "Chubut">Chubut</option>
-          <option value = "Córdoba">Córdoba</option>
-          <option value = "Corrientes">Corrientes</option>
-          <option value = "Entre Ríos">Entre Ríos</option>
-          <option value = "Formosa">Formosa</option>
-          <option value = "Jujuy">Jujuy</option>
-          <option value = "La Pampa">La Pampa</option>
-          <option value = "La Rioja">La Rioja</option>
-          <option value = "Mendoza">Mendoza</option>
-          <option value = "Misiones">Misiones</option>
-          <option value = "Neuquén">Neuquén</option>
-          <option value = "Río Negro">Río Negro</option>
-          <option value = "Salta">Salta</option>
-          <option value = "San Juan">San Juan</option>
-          <option value = "San Luis">San Luis</option>
-          <option value = "Santa Cruz">Santa Cruz</option>
-          <option value = "Santa Fe">Santa Fe</option>
-          <option value = "Santiago del Estero">Santiago del Estero</option>
-          <option value = "Tierra del Fuego">Tierra del Fuego</option>
-          <option value = "Tucumán">Tucumán</option>
-        </select>
-        <!--Calendario-->
-        <input type = "date" id = "fecha-desde" placeholder = "Desde">
-        <input type = "date" id = "fecha-hasta" placeholder = "Hasta">
-        <button type = "submit">🔍 Buscar</button>
-      </form>
-    </section>
-
     <!-- Catálogo de conciertos -->
     <section id="catalogo">
       <h2>Próximos eventos</h2>
@@ -83,19 +47,22 @@
       </div>
     </section>
   </main>
-  
-  <div id = "modalResultados" class = "modalRes">
-    <div class = "modal-resultados">
-      <span id = "cerrar-modal-X">&times</span>
-      <h2>Resultados de la búsqueda</h2>
-      <div id = "resultados-buscador"></div>
-      <button id = "cerrar-modal-boton">Cerrar</button>
-    </div>
-  </div>
+
+  <div id = "cont-buscador"></div>
 
   <footer>
     <p>© 2025 Catálogo de Recitales - Proyecto académico</p>
   </footer>
-  <script src="script.js"></script>
+
+  <script>
+    fetch('buscador.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('cont-buscador').innerHTML = html;
+      })
+      .catch(err => console.log('Error al cargar el buscador; ', err));
+  </script>
+
+  <script src = 'script.js'></script>
 </body>
 </html>

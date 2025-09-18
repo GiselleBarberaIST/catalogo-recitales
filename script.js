@@ -4,19 +4,43 @@ const menuU1 = document.querySelector('header nav ul');
 
 menuHamburguesa.addEventListener('click', () => {
   menuU1.classList.toggle('show');
-})
+});
+
+// ---CARTELERA---
+const carteleraDeslizable = document.querySelectorAll('.poster');
+const puntos = document.querySelectorAll('.dot');
+let current = 0;
+
+function showSlide(index) {
+  carteleraDeslizable.forEach((slide, i) => {
+    slide.classList.toggle('active', i === index);
+    puntos[i].classList.toggle('active', i === index);
+  });
+}
+
+function nextSlide() {
+  current = (current + 1) % carteleraDeslizable.length;
+  showSlide(current);
+}
+
+setInterval(nextSlide, 5000);
+
+puntos.forEach((dot, i) => {
+  dot.addEventListener('click', () => {
+    current = i;
+    showSlide(current);
+  });
+});
 
 // ---BUSCADOR---
 document.addEventListener("DOMContentLoaded", () => { 
 
-  // Setear mínimo de fechas al cargar la página
   const fechaHoy = new Date().toISOString().split("T")[0];
   const desdeInput = document.getElementById('fecha-desde');
   const hastaInput = document.getElementById('fecha-hasta');
   desdeInput?.setAttribute("min", fechaHoy);
   hastaInput?.setAttribute("min", fechaHoy);
 
-  // Cargar conciertos desde JSON
   let conciertos = [];
   fetch("conciertos.json")
     .then(response => response.json())
@@ -26,13 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(err => console.error("Error al cargar conciertos:", err));
 
-  // Cargar buscador dinámicamente
   fetch('buscador.html')
     .then(response => response.text())
     .then(html => {
       document.getElementById('cont-buscador').innerHTML = html;
 
-      // Obtener los elementos del buscador
       const form = document.getElementById('form-buscador');
       const artistaInput = document.getElementById('artista');
       const provinciaSelect = document.getElementById('provincia');
@@ -40,13 +62,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const btnAbrirBuscador = document.getElementById('abrirBuscador');
       const cerrarModalBuscador = modalBuscador.querySelector('#cerrar-modal-X');
 
-      // Abrir modal buscador
       btnAbrirBuscador.addEventListener('click', (e) => {
         e.preventDefault();
         modalBuscador.style.display = 'flex';
       });
 
-      // Cerrar modal buscador
       cerrarModalBuscador.addEventListener('click', () => {
         modalBuscador.style.display = 'none';
       });
@@ -55,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if(e.target === modalBuscador) modalBuscador.style.display = 'none';
       });
 
-      // Modal resultados
       const modalResultados = document.getElementById('modalResultados');
       const cerrarResultadosX = document.getElementById('cerrar-modal-resultados');
       const cerrarResultadosBtn = document.getElementById('cerrar-modal-boton');
@@ -70,7 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if(e.target === modalResultados) modalResultados.style.display = 'none';
       });
 
-      // Manejo del formulario
       form.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -97,12 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
           );
         });
 
-          // Cerrar modal con la X
           cerrarModalBuscador.addEventListener('click', () => {
             modalBuscador.style.display = 'none';
           });
 
-        // Mostrar resultados
         const resultadosContainer = document.getElementById("resultados-buscador");
         resultadosContainer.innerHTML = "";
 
@@ -125,11 +141,10 @@ document.addEventListener("DOMContentLoaded", () => {
         modalResultados.style.display = "flex";
         modalBuscador.style.display = 'none';
       });
-      
+
     })
     .catch(err => console.log('Error al cargar el buscador: ', err));
 
-  // Función auxiliar para parsear fechas
   function parseFechaDDMMYYYY(str) {
     if (!str) return null;
     if (str.includes("/")) {

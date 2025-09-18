@@ -15,35 +15,43 @@
 <body>
   <header>
     <div class = "logo">
-      <img src = "RecitalApp-logo.jpg" alt = "RecitalApp" />
+      <img src = "ImágenesProyecto/RecitalApp-logo.jpg" alt = "RecitalApp" />
     </div>
     <nav>
       <div id = "menuHamburguesa">&#9776;</div>
       <ul>
-        <li><a href="#">Inicio</a></li>
-        <li><a href="#" id = "abrirBuscador">Buscar</a></li>
-        <li><a href="#">Entradas</a></li>
-        <li><a href="#">Conciertos</a></li>
-        <li><a href="#">Favoritos</a></li>
-        <li><a href="#">Cómo llegar</a></li>
+        <li><a href = "#">Inicio</a></li>
+        <li><a href = "#" id = "abrirBuscador">Buscar</a></li>
+        <li><a href = "#">Entradas</a></li>
+        <li><a href = "#">Conciertos</a></li>
+        <li><a href = "#">Favoritos</a></li>
+        <li><a href = "#">Cómo llegar</a></li>
       </ul>
     </nav>
   </header>
   <main>
-    <!-- Catálogo de conciertos -->
-    <section id="catalogo">
+    <!-- Cartelera -->
+    <section class = "título-cartelera">
       <h2>Próximos eventos</h2>
-      <div class="evento">
-        <h3>Arctic Monkeys</h3>
-        <p>📍 Buenos Aires - 12/10/2025</p>
-        <a href="https://www.ticketek.com.ar" target="_blank">Comprar entrada</a>
-        <button>⭐ Agregar a Favoritos</button>
-      </div>
-      <div class="evento">
-        <h3>Fito Páez</h3>
-        <p>📍 Rosario - 20/11/2025</p>
-        <a href="https://www.allaccess.com.ar" target="_blank">Comprar entrada</a>
-        <button>⭐ Agregar a Favoritos</button>
+    <section class="cartelera">
+      <div class="cartelera-container">
+        <a href="https://www.movistararena.com.ar/show/bb2f045f-73f6-4a30-9140-9ce2a9dc8ba9" 
+          class="poster active" target="_blank">
+          <img src= "TarjetasCarrusel/RubenRada.jpeg" alt="Rubén Rada en el Movistar Arena">
+        </a>
+        <a href="https://www.tuentrada.com/eventos/detalle/Lisandro-Aristimu%C3%B1o/287601721820" 
+          class="poster" target="_blank">
+          <img src="TarjetasCarrusel/LisandroAristimunio.JPG" alt="Lisandro Aristimuño en el Gran Rex">
+        </a>
+        <a href="https://www.movistararena.com.ar/show/361a3c08-2dd9-4931-80d8-8a40220ceaf2" 
+          class="poster" target="_blank">
+          <img src="TarjetasCarrusel/LucianoPereyra.jpeg" alt="Luciano Pereyra en el Movistar Arena">
+        </a>
+      </div>  
+      <div class="dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
       </div>
     </section>
   </main>

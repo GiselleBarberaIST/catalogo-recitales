@@ -6,9 +6,12 @@ body {
   font-size: 16px;
   margin: 0;
   padding: 0;
-  padding-top: 150px;
-  background: #b449fc;
-  color: #333;
+  padding-top: 30px;
+  background: linear-gradient(rgba(150, 150, 150, 0.5), rgba(155, 155, 155, 0.5)), url(ImágenesProyecto/guitarraFondo.jpg);
+  background-size: cover;
+  background-position: center;
+  color: #1b1a1a;
+  z-index: 0;
 }
 
 header {
@@ -16,13 +19,14 @@ header {
   top: 0;
   left: 0;
   width: 100%;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-family: "Metal Mania", sans-serif;
-  background: #222;
+  background: #1b1a1a;
   color: #fff;
-  padding: 10px 20px;
+  padding: 0;
   flex-wrap: nowrap;
   box-sizing: border-box;
   z-index: 1000;
@@ -39,8 +43,10 @@ header nav {
 }
 
 header .logo img {
-  height: 80px;
+  height: 74px;
   padding: 0;
+  object-fit: contain;
+  justify-items: left;
 }
 
 nav ul {
@@ -60,20 +66,80 @@ nav ul li a {
   text-decoration: none;
 }
 
+.cartelera {
+  position: relative;
+  width: 100%;
+  height: 325px;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+.cartelera-container {
+  position: relative;
+  top: -20px;
+  width: 100%;
+  height: 100%;
+}
+
+.poster {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.poster.active {
+  opacity: 1;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background-color: transparent;
+  display: block;
+}
+
+.dots {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+.dot.active {
+  background-color: white;
+}
+
 section {
   font-family: "Metal Mania", sans-serif; 
   font-size: 1rem;
-  padding: 20px;
+  padding: 30px;
 }
 
-.evento {
-  font-family:"Roboto", sans-serif;
-  font-size: 1rem;
-  background: #fff;
-  margin: 10px 0;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+footer {
+  font-family: "Metal Mania", sans-serif;
+  font-size: 0.9rem;
+  padding: 10px;
 }
 
 .modBusc {
@@ -116,7 +182,6 @@ section {
   max-height: 80vh;
   overflow-y: auto;
 }
-
 
 .modBusc .modal-resultados {
   font-family:"Roboto", sans-serif;
@@ -168,6 +233,10 @@ section {
     display: block;
     text-align: center;
     margin: 10px 0;
+  }
+
+  .poster {
+    width: 200px;
   }
 
   #menuHamburguesa {

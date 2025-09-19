@@ -35,12 +35,6 @@ puntos.forEach((dot, i) => {
 // ---BUSCADOR---
 document.addEventListener("DOMContentLoaded", () => { 
 
-  const fechaHoy = new Date().toISOString().split("T")[0];
-  const desdeInput = document.getElementById('fecha-desde');
-  const hastaInput = document.getElementById('fecha-hasta');
-  desdeInput?.setAttribute("min", fechaHoy);
-  hastaInput?.setAttribute("min", fechaHoy);
-
   let conciertos = [];
   fetch("conciertos.json")
     .then(response => response.json())
@@ -58,9 +52,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const form = document.getElementById('form-buscador');
       const artistaInput = document.getElementById('artista');
       const provinciaSelect = document.getElementById('provincia');
+      const desdeInput = document.getElementById('fecha-desde');
+      const hastaInput = document.getElementById('fecha-hasta');
+      const fechaHoy = new Date().toISOString().split("T")[0];
       const modalBuscador = document.getElementById('modalBuscador');
       const btnAbrirBuscador = document.getElementById('abrirBuscador');
-      const cerrarModalBuscador = modalBuscador.querySelector('#cerrar-modal-X');
+      const cerrarModalBuscador = modalBuscador.querySelector('#cerrar-modal-buscador');
+      
+      desdeInput?.setAttribute("min", fechaHoy);
+      hastaInput?.setAttribute("min", fechaHoy);
 
       btnAbrirBuscador.addEventListener('click', (e) => {
         e.preventDefault();
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const modalResultados = document.getElementById('modalResultados');
-      const cerrarResultadosX = document.getElementById('cerrar-modal-resultados');
+      const cerrarResultadosX = modalResultados.querySelector('#cerrar-modal-resultados');
       const cerrarResultadosBtn = document.getElementById('cerrar-modal-boton');
 
       cerrarResultadosX?.addEventListener('click', () => {
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const hasta = fechaHasta ? new Date(fechaHasta) : null;
 
         const resultados = conciertos.filter(c => {
-          const fechaEvento = parseFechaDDMMYYYY(c.fecha);
+          const fechaEvento = parseFecha(c.fecha);
           return (
             (!artista || (c.artista && c.artista.toLowerCase().includes(artista))) &&
             (provincia === "todas" || (c.provincia && c.provincia.toLowerCase() === provincia)) &&
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
             div.className = "evento";
             div.innerHTML = `
               <h3>${c.artista || "Artista sin nombre"}</h3>
-              <p>📍 ${c.provincia || "Provincia no especificada"} - ${c.fecha || "Fecha no especificada"}</p>
+              <p>📍 ${c.provincia || "Provincia no especificada"} - ${formatoDDMMYYYY(c.fecha) || "Fecha no especificada"}</p>
               <a href="#" target="_blank">Comprar entrada</a>
               <button>⭐ Agregar a Favoritos</button>
             `;
@@ -145,12 +145,18 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(err => console.log('Error al cargar el buscador: ', err));
 
-  function parseFechaDDMMYYYY(str) {
+  function parseFecha(str) {
     if (!str) return null;
     if (str.includes("/")) {
-      const [d, m, y] = str.split("/");
+      const [m, d, y] = str.split("/");
       return new Date(`${y}-${m}-${d}`);
     }
     return new Date(str);
+  }
+
+  function formatoDDMMYYYY(str) {
+    if (!str) return "";
+    const [m, d, y] = str.split("/");
+    return `${d}/${m}/${y}`;
   }
 });

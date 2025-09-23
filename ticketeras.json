@@ -1,0 +1,37 @@
+[
+    {
+        "ticketera": "All Access", 
+        "imagen": "LogosTicketeras/allaccess-clear.png",
+        "url": "https://www.allaccess.com.ar/"
+    },
+    {
+        "ticketera": "CoolCo", 
+        "imagen": "LogosTicketeras/coolco-image.png",
+        "url": "https://ticketing.coolco.io/tickets-ar/es/main"
+    },
+    {
+        "ticketera": "Enigma Tickets",
+        "imagen": "LogosTicketeras/enigmatickets.JPG",
+        "url": "https://www.enigmatickets.com/"
+    },
+    {
+        "ticketera": "Livepass",
+        "imagen": "LogosTicketeras/livepass.png",
+        "url": "https://livepass.com.ar/"
+    },
+    {
+        "ticketera": "Ticketek",
+        "imagen": "LogosTicketeras/logo-ticketek-argentina_1.png",
+        "url": "https://www.ticketek.com.ar/"
+    },
+    {
+        "ticketera": "Movistar Arena",
+        "imagen": "LogosTicketeras/movistararena.png",
+        "url": "https://www.movistararena.com.ar/"
+    },
+    {
+        "ticketera": "Tu Entrada",
+        "imagen": "LogosTicketeras/tuentrada.png",
+        "url": "https://www.tuentrada.com/"
+    }
+]

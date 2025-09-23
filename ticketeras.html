@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Recitales</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class = "logo">
+      <img src = "ImagenesProyecto/recitalapplogo.jpg" alt = "RecitalApp" />
+    </div>
+    <nav>
+      <div id = "menuHamburguesa">&#9776;</div>
+      <ul>
+        <li><a href = "index.html">Inicio</a></li>
+        <li><a href = "#" id = "abrirBuscador">Buscar</a></li>
+        <li><a href = "ticketeras.html">Ticketeras</a></li>
+        <li><a href = "favoritos.html">Favoritos</a></li>
+        <li><a href = "#">Cómo llegar</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section class = "titulo-ticketeras">
+        <h2>Ticketeras</h2>
+    </section>
+    <section class = "ticketeras-principales">
+        <script>
+            fetch("ticketeras.json")
+            .then(response => response.json())
+            .then(data => {
+                const contenedor = document.querySelector(".ticketeras-principales");
+
+                data.forEach(artista => {
+                    const card = document.createElement("div");
+
+                    const url = document.createElement("a");
+                    url.href = artista.url;
+                    url.target = "_blank";
+
+                    const img = document.createElement("img");
+                    img.src = artista.imagen;
+                    img.alt = artista.nombre;
+
+                    url.appendChild(img);
+
+                    const nombre = document.createElement("p");
+                    nombre.textContent = artista.nombre;
+
+                    card.appendChild(url);
+                    card.appendChild(nombre);
+
+                    contenedor.appendChild(card);
+                })
+            })
+            .catch(error => console.error("Error: ", error));
+        </script>
+    </section>
+  </main>
+  <footer>
+    <p>© 2025 Catálogo de Recitales - Proyecto académico</p>
+  </footer>
+  <script src = 'script.js'></script>
+</body>
+</html>

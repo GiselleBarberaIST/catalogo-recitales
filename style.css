@@ -3,6 +3,9 @@
   src: url("FuentesProyecto/KingOfRockDemo.otf") format("truetype");
 }*/
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   font-size: 16px;
   margin: 0;
   padding: 0;
@@ -13,8 +16,12 @@ body {
   color: #f0f0f0;
   box-sizing: border-box;
   overflow-x: hidden;
-  overflow-y: hidden;
+  overflow-y: auto;
   z-index: 0;
+}
+
+main {
+  flex: 1;
 }
 
 header {
@@ -50,6 +57,7 @@ header .logo img {
   height: 74px;
   object-fit: contain;
   justify-items: left;
+  max-width: 100%;
 }
 
 nav ul {
@@ -115,15 +123,12 @@ nav ul li a:hover {
   object-position: center;
   background-color: transparent;
   display: block;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .poster img:hover {
-  width: 100%;
-  height: 105%;
-  object-fit: contain;
-  object-position: center;
-  background-color: transparent;
-  display: block;
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0 , 0, 0, 0.4);
 }
 
 .dots {
@@ -153,7 +158,7 @@ nav ul li a:hover {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
-
+  justify-content: center;
 }
 
 .favoritos-usuario div {
@@ -166,16 +171,16 @@ nav ul li a:hover {
 
 .favoritos-usuario img {
   width: 300px;
+  max-width: 100%;
   height: auto;
   object-fit: cover;
   border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .favoritos-usuario img:hover {
-  width: 320px;
-  height: auto;
-  object-fit: cover;
-  border-radius: 8px;
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0 , 0, 0, 0.4);
 }
 
 section {
@@ -183,6 +188,8 @@ section {
   font-size: 1rem;
   padding: 30px;
   color: #fff;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 footer {
@@ -317,7 +324,7 @@ a:hover {
   }
 
   .cartelera {
-    height: 150px;
+    height: 375px;
   }
 
   .cartelera-container {

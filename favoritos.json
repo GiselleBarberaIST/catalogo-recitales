@@ -1,0 +1,22 @@
+[
+    {
+        "nombre": "Airbag en Rosario",
+        "imagen": "TarjetasCarrusel/AirbagRos.jpg",
+        "url": "https://www.tuentrada.com/eventos/detalle/AIRBAG-ROS/785385672329"
+    },
+    {
+        "nombre": "Rata Blanca en Buenos Aires",
+        "imagen": "TarjetasCarrusel/RataBlanca.jpeg",
+        "url": "https://www.movistararena.com.ar/show/59efb1a5-e06e-4dfa-8af6-50770bc80d90"
+    },
+    {
+        "nombre": "Caballeros de la Quema en Buenos Aires",
+        "imagen": "TarjetasCarrusel/CaballerosDeLaQuema.jpeg",
+        "url": "https://www.movistararena.com.ar/show/912d9037-df93-4c37-8786-a0efaa3d8ca0"
+    }, 
+    {
+        "nombre": "Guns N' Roses en Buenos Aires",
+        "imagen": "TarjetasCarrusel/Guns.jpg",
+        "url": "https://www.allaccess.com.ar/event/guns-n-roses"
+    }
+]

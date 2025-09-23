@@ -7,7 +7,7 @@ body {
   margin: 0;
   padding: 0;
   padding-top: 30px;
-  background: linear-gradient(rgba(18, 18, 18, 0.9), rgba(18, 18, 18, 0.9)), url(catalogo-recitales/ImagenesProyecto/guitarrafondo.jpg);
+  background: linear-gradient(rgba(18, 18, 18, 0.9), rgba(18, 18, 18, 0.9)), url(ImagenesProyecto/guitarrafondo.jpg);
   background-size: cover;
   background-position: center;
   color: #f0f0f0;
@@ -117,6 +117,15 @@ nav ul li a:hover {
   display: block;
 }
 
+.poster img:hover {
+  width: 100%;
+  height: 105%;
+  object-fit: contain;
+  object-position: center;
+  background-color: transparent;
+  display: block;
+}
+
 .dots {
   position: absolute;
   bottom: 15px;
@@ -138,6 +147,35 @@ nav ul li a:hover {
 
 .dot.active {
   background-color: #6A0DAD;
+}
+
+.favoritos-usuario {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+
+}
+
+.favoritos-usuario div {
+  display: flex;
+  font-family: 'Roboto', sans-serif;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.favoritos-usuario img {
+  width: 300px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.favoritos-usuario img:hover {
+  width: 320px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 section {
@@ -163,8 +201,8 @@ footer {
   font-size: 1rem;
   background: #1e1e1e;
   color: #fff;
-  width: 90%;
-  max-width: 600px;
+  width: 100%;
+  max-width: 900px;
   max-height: 80vh;
   padding: 20px;
   border-radius: 10px;
@@ -224,7 +262,7 @@ button, .modalBusc input[type = "submit"] {
   background: #6a0dad;
   color: #fff;
   border: none;
-  padding: 10px 20px;
+  padding: 5px 10px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;

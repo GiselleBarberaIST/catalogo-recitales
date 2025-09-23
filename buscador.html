@@ -32,7 +32,7 @@
         <input type = "text" id = "artista" placeholder = "Artista">
         <!--Seleccionar provincia-->
         <select id = "provincia">
-          <option value = "todas">Todas</option>
+          <option value = "todas">Seleccioná una provincia</option>
           <option value = "Buenos Aires">Buenos Aires</option>
           <option value = "Ciudad Autónoma de Buenos Aires">Ciudad Autónoma de Buenos Aires</option>
           <option value = "Catamarca">Catamarca</option>
@@ -59,8 +59,14 @@
           <option value = "Tucumán">Tucumán</option>
         </select>
         <!--Calendario-->
-        <input type = "date" id = "fecha-desde" placeholder = "Desde">
-        <input type = "date" id = "fecha-hasta" placeholder = "Hasta">
+        <div class = "datepicker-container">
+          <label for = "fecha-desde">Desde</label>
+          <input type = "date" id = "fecha-desde">
+        </div>
+        <div class = "datepicker-container">
+          <label for = "fecha-hasta">Hasta</label>
+          <input type = "date" id = "fecha-hasta">
+        </div>
         <button type = "submit">🔍 Buscar</button>
       </form>
     </div>

@@ -160,3 +160,63 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${d}/${m}/${y}`;
   }
 });
+
+// --FAVORITOS
+fetch("favoritos.json")
+.then(response => response.json())
+.then(data => {
+    const contenedor = document.querySelector(".favoritos-usuario");
+
+    data.forEach(artista => {
+        const card = document.createElement("div");
+
+        const url = document.createElement("a");
+        url.href = artista.url;
+        url.target = "_blank";
+
+        const img = document.createElement("img");
+        img.src = artista.imagen;
+        img.alt = artista.nombre;
+
+        url.appendChild(img);
+
+        const nombre = document.createElement("p");
+        nombre.textContent = artista.nombre;
+
+        card.appendChild(url);
+        card.appendChild(nombre);
+
+        contenedor.appendChild(card);
+    })
+})
+.catch(error => console.error("Error: ", error));
+
+// --TICKETERAS
+fetch("ticketeras.json")
+.then(response => response.json())
+.then(data => {
+    const contenedor = document.querySelector(".ticketeras-principales");
+
+    data.forEach(artista => {
+        const card = document.createElement("div");
+
+        const url = document.createElement("a");
+        url.href = artista.url;
+        url.target = "_blank";
+
+        const img = document.createElement("img");
+        img.src = artista.imagen;
+        img.alt = artista.nombre;
+
+        url.appendChild(img);
+
+        const nombre = document.createElement("p");
+        nombre.textContent = artista.nombre;
+
+        card.appendChild(url);
+        card.appendChild(nombre);
+
+        contenedor.appendChild(card);
+    })
+})
+.catch(error => console.error("Error: ", error));

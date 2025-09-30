@@ -430,6 +430,133 @@ a:hover {
   font-family: "Roboto", sans-serif;
 }
 
+.modal-toggle {
+  display: none;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-toggle:checked ~ .modal {
+  display: flex;
+}
+
+.modal-content {
+  position: relative;
+  background-color: rgba(18,18,18,0.95);
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.login-form {
+  display: block;
+}
+
+.signup-form {
+  display: none;
+}
+
+#switch-form-toggle:checked ~ .modal .login-form {
+  display: none;
+}
+
+#switch-form-toggle:checked ~ .modal .signup-form {
+  display: block;
+}
+
+.switch-form {
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.formulario h2 {
+  font-family: "Metal Mania", sans-serif;
+  color: #6a0dad;
+  text-align: center;
+}
+
+.formulario label,
+.formulario input {
+  display: block;
+  width: 100%;
+  margin-bottom: 15px;
+  font-family: "Roboto", sans-serif;
+}
+
+.formulario button {
+  background-color: #6a0dad;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 10px;
+}
+
+.formulario button:hover {
+  background-color: #ff1744;
+}
+
+.socialmedia-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.socialmedia-buttons .google {
+  background-color: #db4437;
+  color: #fff;
+}
+
+.socialmedia-buttons .facebook {
+  background-color: #1877f2;
+  color: #fff;
+}
+
+.socialmedia-buttons button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.socialmedia-buttons button:hover {
+  opacity: 0.9;
+}
+
+.btn-header {
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: "Metal Mania", sans-serif;
+  padding: 5px 10px;
+  display: inline-block;
+  transition: color 0.3s;
+}
+
+.btn-header:hover {
+  color: #ff1744;
+}
+
 #menuHamburguesa {
   display: none;
 }
@@ -539,6 +666,15 @@ a:hover {
 
   .overlay {
     font-size: 14px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 20%;
+  }
+  
+  .socialmedia-buttons {
+    flex-direction: column;
   }
 
   body {

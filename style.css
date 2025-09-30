@@ -225,7 +225,7 @@ footer {
   font-family: "Metal Mania", sans-serif;
   font-size: 0.9rem;
   padding: 10px;
-  background: #121212;
+  background: transparent;
   color: #aaa;
   border-top: 2px solid #6a0dad;
   text-align: center;
@@ -354,6 +354,82 @@ a:hover {
   color: #ff1744;
 }
 
+.grid {
+  display: grid;
+  font-family: "Roboto", sans-serif;
+  grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+  gap:20px;
+  padding: 20px;
+}
+
+.evento {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.evento img {
+  width: 100%;
+  display: block;
+  height: auto;
+  border-radius: 10px;
+  z-index: 1;
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.evento:hover .overlay {
+  opacity: 1;
+}
+
+.detalleevento {
+  position: relative;
+  font-family: "Roboto", sans-serif;
+  overflow: hidden;
+  cursor: auto;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.detalleevento img {
+  width: 200px;
+  height: auto;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.detalleevento .texto {
+  flex: 1;
+}
+
+.link-volver {
+  font-family: "Roboto", sans-serif;
+}
+
 #menuHamburguesa {
   display: none;
 }
@@ -454,6 +530,15 @@ a:hover {
     width: 95%;
     max-width: none;
     padding: 15px;
+  }
+
+  .grid {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .overlay {
+    font-size: 14px;
   }
 
   body {

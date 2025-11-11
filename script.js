@@ -1,3 +1,27 @@
+// ---INTEGRACIÓN AIRTABLE---
+const token = "";
+const baseID = "appdhZ2FVCDUuj4YT";
+const baseUrl = `https://api.airtable.com/v0/${baseID}`;
+
+async function obtenerDatos(tableName) {
+  const url = `${baseUrl}/${tableName}`;
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}`}
+  });
+  const data = await response.json();
+  return data.records.map(r => r.fields);
+}
+
+/*(async () => {
+  const conciertos = await obtenerDatos("Conciertos");
+  const favoritos = await obtenerDatos("Favoritos");
+  const pantallaConciertos = await obtenerDatos("PantallaConciertos");
+
+  console.log("Conciertos: ", conciertos);
+  console.log("Favoritos: ", favoritos);
+  console.log("Pantalla de Conciertos: ", pantallaConciertos);
+})();*/
+
 // ---MENÚ HAMBURGUESA---
 const menuHamburguesa = document.getElementById('menuHamburguesa');
 const menuU1 = document.querySelector('header nav ul');
@@ -7,42 +31,61 @@ menuHamburguesa.addEventListener('click', () => {
 });
 
 // ---CARTELERA---
-const carteleraDeslizable = document.querySelectorAll('.poster');
-const puntos = document.querySelectorAll('.dot');
-let current = 0;
+async function cargarCartelera() {
+  const pantallaConciertos = await obtenerDatos("PantallaConciertos");
+  const contenedorCartelera = document.querySelector(".cartelera");
+  const contenedorPuntos = document.querySelector(".dots");
 
-function showSlide(index) {
-  carteleraDeslizable.forEach((slide, i) => {
-    slide.classList.toggle('active', i === index);
-    puntos[i].classList.toggle('active', i === index);
+  if (!contenedorCartelera) return;
+
+  contenedorCartelera.innerHTML = "";
+  if (contenedorPuntos) contenedorPuntos.innerHTML = "";
+
+  pantallaConciertos.forEach((c, i) => {
+    const slide = document.createElement("div");
+    slide.className = "poster";
+    if (i === 0) slide.classList.add("active");
+    slide.innerHTML = `
+      <a href = "${c.DetalleURL}">
+        <img src = "${c.Imagen[0].url}" alt = "${c.Nombre}">
+      </a>
+    `;
+    contenedorCartelera.appendChild(slide);
+
+    if (contenedorPuntos) {
+      const dot = document.createElement("span");
+      dot.className = i === 0 ? "dot active" : "dot";
+      dot.addEventListener("click", () => {
+        showSlide(i);
+      });
+      contenedorPuntos.appendChild(dot);
+    }
   });
-}
 
-function nextSlide() {
-  current = (current + 1) % carteleraDeslizable.length;
-  showSlide(current);
-}
+  let current = 0;
+  const slides = document.querySelectorAll(".poster");
+  const puntos = document.querySelectorAll(".dot");
 
-setInterval(nextSlide, 5000);
+  function showSlide(index) {
+    slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+    puntos.forEach((dot, i) => dot.classList.toggle("active", i === index));
+    current = index;
+  }
 
-puntos.forEach((dot, i) => {
-  dot.addEventListener('click', () => {
-    current = i;
+  function nextSlide() {
+    current = (current + 1) % slides.length;
     showSlide(current);
-  });
-});
+  }
+
+  setInterval(nextSlide, 5000);
+}
+
+cargarCartelera();
 
 // ---BUSCADOR---
-document.addEventListener("DOMContentLoaded", () => { 
-
-  let conciertos = [];
-  fetch("conciertos.json")
-    .then(response => response.json())
-    .then(data => {
-      conciertos = data;
-      console.log("Conciertos cargados:", conciertos);
-    })
-    .catch(err => console.error("Error al cargar conciertos:", err));
+document.addEventListener("DOMContentLoaded", async() => {
+  const conciertos = await obtenerDatos("Conciertos");
+  console.log("Conciertos cargados desde Airtable: ", conciertos);
 
   fetch('buscador.html')
     .then(response => response.text())
@@ -58,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const modalBuscador = document.getElementById('modalBuscador');
       const btnAbrirBuscador = document.getElementById('abrirBuscador');
       const cerrarModalBuscador = modalBuscador.querySelector('#cerrar-modal-buscador');
-      
+
       desdeInput?.setAttribute("min", fechaHoy);
       hastaInput?.setAttribute("min", fechaHoy);
 
@@ -72,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       window.addEventListener('click', (e) => {
-        if(e.target === modalBuscador) modalBuscador.style.display = 'none';
+        if (e.target === modalBuscador) modalBuscador.style.display = 'none';
       });
 
       const modalResultados = document.getElementById('modalResultados');
@@ -86,18 +129,18 @@ document.addEventListener("DOMContentLoaded", () => {
         modalResultados.style.display = 'none';
       });
       window.addEventListener('click', (e) => {
-        if(e.target === modalResultados) modalResultados.style.display = 'none';
+        if (e.target === modalResultados) modalResultados.style.display = 'none';
       });
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const artista = artistaInput.value.trim().toLowerCase();
-        const provincia = provinciaSelect.value.trim().toLowerCase();
+        const artista = artistaInput.value.trim().toLowerCase;
+        const provincia = provinciaSelect.value.trim().toLowerCase;
         const fechaDesde = desdeInput.value;
         const fechaHasta = hastaInput.value;
 
-        if(fechaDesde && fechaHasta && new Date(fechaHasta) < new Date(fechaDesde)){
+        if (fechaDesde && fechaHasta && new Date(fechaHasta) < new Date(fechaDesde)) {
           alert("La fecha final no puede ser menor a la fecha inicial.");
           return;
         }
@@ -106,117 +149,96 @@ document.addEventListener("DOMContentLoaded", () => {
         const hasta = fechaHasta ? new Date(fechaHasta) : null;
 
         const resultados = conciertos.filter(c => {
-          const fechaEvento = parseFecha(c.fecha);
+          const fechaEvento = parseFecha(c.Fecha);
           return (
-            (!artista || (c.artista && c.artista.toLowerCase().includes(artista))) &&
-            (provincia === "todas" || (c.provincia && c.provincia.toLowerCase() === provincia)) &&
+            (!artista || (c.Artista && c.Artista.toLowerCase().includes(artista))) &&
+            (provincia === "todas" || (c.Provincia && c.Provincia.toLowerCase() === provincia)) &&
             (!desde || fechaEvento >= desde) &&
             (!hasta || fechaEvento <= hasta)
           );
         });
 
-          cerrarModalBuscador.addEventListener('click', () => {
-            modalBuscador.style.display = 'none';
-          });
-
         const resultadosContainer = document.getElementById("resultados-buscador");
         resultadosContainer.innerHTML = "";
 
-        if(resultados.length === 0){
+        if (resultados.length === 0) {
           resultadosContainer.innerHTML = "<p>No se encontraron conciertos con esos filtros.</p>";
         } else {
           resultados.forEach(c => {
             const div = document.createElement("div");
             div.className = "evento";
             div.innerHTML = `
-              <h3>${c.artista || "Artista sin nombre"}</h3>
-              <p>📍 ${c.provincia || "Provincia no especificada"} - ${formatoDDMMYYYY(c.fecha) || "Fecha no especificada"}</p>
-              <a href="#" target="_blank">Comprar entrada</a>
-              <button>⭐ Agregar a Favoritos</button>
+              <h3>${c.Artista || "Artista sin nombre"}</h3>
+              <p>${c.Provincia || "Provincia no especificada"} - ${formatoDDMMYYYY(c.Fecha) || "Fecha no especificada"}</p>
+              <a href="${c.URL || '#'}" target="_blank">Comprar entradas</a>
+              <button>Agregar a Favoritos</button>
             `;
             resultadosContainer.appendChild(div);
           });
         }
 
         modalResultados.style.display = "flex";
-        modalBuscador.style.display = 'none';
+        modalBuscador.style.display = "none";
       });
-
-    })
-    .catch(err => console.log('Error al cargar el buscador: ', err));
+  })
+  .catch(err => console.log('Error al cargar el buscador: ', err));
 
   function parseFecha(str) {
     if (!str) return null;
-    if (str.includes("/")) {
-      const [m, d, y] = str.split("/");
-      return new Date(`${y}-${m}-${d}`);
-    }
     return new Date(str);
   }
 
   function formatoDDMMYYYY(str) {
-    if (!str) return "";
-    const [m, d, y] = str.split("/");
-    return `${d}/${m}/${y}`;
+    if(!str) return "";
+    const fecha = new Date(str);
+    return fecha.toLocaleDateString("es-AR");
   }
-});
 
 // --FAVORITOS
-fetch("favoritos.json")
-.then(response => response.json())
-.then(data => {
-    const contenedor = document.querySelector(".favoritos-usuario");
+const favoritos = await obtenerDatos("Favoritos");
+const contenedorFav = document.querySelector(".favoritos-usuario");
+if (contenedorFav) {
+  favoritos.forEach(f => {
+    const card = document.createElement("div");
+    const url = document.createElement("a");
+    url.href = f.URL;
+    url.target = "_blank";
 
-    data.forEach(artista => {
-        const card = document.createElement("div");
+    const img = document.createElement("img");
+    img.src = f.Imagen[0].url;
+    img.alt = f.Nombre;
 
-        const url = document.createElement("a");
-        url.href = artista.url;
-        url.target = "_blank";
+    url.appendChild(img);
+    const nombre = document.createElement("p");
+    nombre.textContent = f.Nombre;
 
-        const img = document.createElement("img");
-        img.src = artista.imagen;
-        img.alt = artista.nombre;
-
-        url.appendChild(img);
-
-        const nombre = document.createElement("p");
-        nombre.textContent = artista.nombre;
-
-        card.appendChild(url);
-        card.appendChild(nombre);
-
-        contenedor.appendChild(card);
-    })
-})
-.catch(error => console.error("Error: ", error));
+    card.appendChild(url);
+    card.appendChild(nombre);
+    contenedorFav.appendChild(card);
+  });
+}
 
 // --TICKETERAS
-fetch("ticketeras.json")
-.then(response => response.json())
-.then(data => {
-    const contenedor = document.querySelector(".ticketeras-principales");
+  const ticketeras = await obtenerDatos("Ticketeras");
+  const contenedorTick = document.querySelector(".ticketeras-principales");
+  if (contenedorTick) {
+    ticketeras.forEach(t => {
+      const card = document.createElement("div");
+      const url = document.createElement("a");
+      url.href = t.URL;
+      url.target = "_blank";
 
-    data.forEach(artista => {
-        const card = document.createElement("div");
+      const img = document.createElement("img");
+      img.src = t.Imagen[0].url;
+      img.alt = t.Nombre;
 
-        const url = document.createElement("a");
-        url.href = artista.url;
-        url.target = "_blank";
+      url.appendChild(img);
+      const nombre = document.createElement("p");
+      nombre.textContent = t.Nombre;
 
-        const img = document.createElement("img");
-        img.src = artista.imagen;
-        img.alt = artista.nombre;
-
-        url.appendChild(img);
-
-        const nombre = document.createElement("p");
-        nombre.textContent = artista.nombre;
-
-        card.appendChild(url);
-        card.appendChild(nombre);
-
-        contenedor.appendChild(card);
-    })
-})
-.catch(error => console.error("Error: ", error));
+      card.appendChild(url);
+      card.appendChild(nombre);
+      contenedorTick.appendChild(card);
+    });
+  }
+});

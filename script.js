@@ -12,7 +12,7 @@ async function obtenerDatos(tableName) {
   return data.records.map(r => r.fields);
 }
 
-/*(async () => {
+(async () => {
   const conciertos = await obtenerDatos("Conciertos");
   const favoritos = await obtenerDatos("Favoritos");
   const pantallaConciertos = await obtenerDatos("PantallaConciertos");
@@ -20,7 +20,7 @@ async function obtenerDatos(tableName) {
   console.log("Conciertos: ", conciertos);
   console.log("Favoritos: ", favoritos);
   console.log("Pantalla de Conciertos: ", pantallaConciertos);
-})();*/
+})();
 
 // ---MENÚ HAMBURGUESA---
 const menuHamburguesa = document.getElementById('menuHamburguesa');

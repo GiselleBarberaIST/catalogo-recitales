@@ -1,5 +1,5 @@
 // ---INTEGRACIÓN AIRTABLE---
-const token = "";
+const token = "patEqV2sPUQuOgfbP.d999c807bf015abc0f70feadf7a082e0de0080a36360ae7ee976f882d8466bda";
 const baseID = "appdhZ2FVCDUuj4YT";
 const baseUrl = `https://api.airtable.com/v0/${baseID}`;
 

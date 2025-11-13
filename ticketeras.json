@@ -33,5 +33,20 @@
         "ticketera": "Tu Entrada",
         "imagen": "LogosTicketeras/tuentrada.png",
         "url": "https://www.tuentrada.com/"
+    },
+	{
+        "ticketera": "Central Ticket",
+        "imagen": "LogosTicketeras/CentralTicket.png",
+        "url": "https://centralticket.net/"
+    },
+	{
+        "ticketera": "Entrada Uno",
+        "imagen": "LogosTicketeras/entradauno.png",
+        "url": "https://entradauno.com/"
+    },
+	{
+        "ticketera": "Passline",
+        "imagen": "LogosTicketeras/passline.png",
+        "url": "https://home.passline.com/home"
     }
 ]

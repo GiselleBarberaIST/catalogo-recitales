@@ -4,8 +4,6 @@ import { AIRTABLE_TOKEN, BASE_ID } from "./env.js";*/
   const baseID = "appdhZ2FVCDUuj4YT";
   const baseUrl = `https://api.airtable.com/v0/${baseID}`;
 
-console.log(AIRTABLE_TOKEN);
-
 async function obtenerDatos(tabla) {
   try {
     const res = await fetch(`${baseUrl}/${tabla}`, {

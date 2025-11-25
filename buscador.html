@@ -12,70 +12,102 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
+  <header>
+        <div class = "logo">
+            <a href = "index.html">
+                <img src = "ImagenesProyecto/recitalapplogo.jpg" alt = "RecitalApp" />
+            </a>
+        </div>
+        <nav>
+            <div id = "menuHamburguesa">&#9776;</div>
+            <ul>
+                <li><a href = "buscador.html">Buscar</a></li>
+                <li><a href = "ticketeras.html">Ticketeras</a></li>
+                <li><a href = "favoritos.html">Favoritos</a></li>
+                <li><a href = "conciertos.html">Conciertos</a></li>
+                <li><a href = "#">Cómo llegar</a></li>
+            </ul>
+        </nav>
+    </header>
+  <body>
+   <main id="buscador-screen" class="buscador-screen">
 
-<body>
-  <div id = "modalResultados" class = "modalRes">
-    <div class = "modal-resultados">
-      <span id="cerrar-modal-resultados" class="cerrar-X">&times;</span>
-      <h2>Resultados de la búsqueda</h2>
-      <div id = "resultados-buscador"></div>
-      <button id = "cerrar-modal-boton">Cerrar</button>
-    </div>
-  </div>
+    <div class="buscador-panel">
 
-  <div id = "modalBuscador" class = "modBusc">
-    <div class = "modal-resultados">
-      <span id = "cerrar-modal-buscador" class = "cerrar-X">&times;</span>
       <h2>Buscar recitales</h2>
-      <form id = "form-buscador">
-                <!-- Ingresar artista -->
-        <div class = "campo-artista">
-          <label for = "artista">Artista</label>
-          <input type = "text" id = "artista">
+
+      <form id="form-buscador" class="form-buscador">
+
+        <div class="filtros-row">
+
+          <div class="campo">
+            <label for="artista">Artista</label>
+            <input type="text" id="artista" placeholder="Nombre del artista">
+          </div>
+
+          <div class="campo">
+            <label for="provincia">Provincia</label>
+            <select id="provincia">
+              <option value="todas">Todas</option>
+              <option value="Buenos Aires">Buenos Aires</option>
+              <option value="Ciudad Autónoma de Buenos Aires">Ciudad Autónoma de Buenos Aires</option>
+              <option value="Catamarca">Catamarca</option>
+              <option value="Chaco">Chaco</option>
+              <option value="Chubut">Chubut</option>
+              <option value="Córdoba">Córdoba</option>
+              <option value="Corrientes">Corrientes</option>
+              <option value="Entre Ríos">Entre Ríos</option>
+              <option value="Formosa">Formosa</option>
+              <option value="Jujuy">Jujuy</option>
+              <option value="La Pampa">La Pampa</option>
+              <option value="La Rioja">La Rioja</option>
+              <option value="Mendoza">Mendoza</option>
+              <option value="Misiones">Misiones</option>
+              <option value="Neuquén">Neuquén</option>
+              <option value="Río Negro">Río Negro</option>
+              <option value="Salta">Salta</option>
+              <option value="San Juan">San Juan</option>
+              <option value="San Luis">San Luis</option>
+              <option value="Santa Cruz">Santa Cruz</option>
+              <option value="Santa Fe">Santa Fe</option>
+              <option value="Santiago del Estero">Santiago del Estero</option>
+              <option value="Tierra del Fuego">Tierra del Fuego</option>
+              <option value="Tucumán">Tucumán</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label for="fecha-desde">Desde</label>
+            <input type="date" id="fecha-desde">
+          </div>
+
+          <div class="campo">
+            <label for="fecha-hasta">Hasta</label>
+            <input type="date" id="fecha-hasta">
+          </div>
+
         </div>
-        <!--Seleccionar provincia-->
-        <div class = "select-provincia">
-          <label for = "provincia">Provincia</label>
-          <select id = "provincia">
-            <option value = "todas">Todas</option>
-            <option value = "Buenos Aires">Buenos Aires</option>
-            <option value = "Ciudad Autónoma de Buenos Aires">Ciudad Autónoma de Buenos Aires</option>
-            <option value = "Catamarca">Catamarca</option>
-            <option value = "Chaco">Chaco</option>
-            <option value = "Chubut">Chubut</option>
-            <option value = "Córdoba">Córdoba</option>
-            <option value = "Corrientes">Corrientes</option>
-            <option value = "Entre Ríos">Entre Ríos</option>
-            <option value = "Formosa">Formosa</option>
-            <option value = "Jujuy">Jujuy</option>
-            <option value = "La Pampa">La Pampa</option>
-            <option value = "La Rioja">La Rioja</option>
-            <option value = "Mendoza">Mendoza</option>
-            <option value = "Misiones">Misiones</option>
-            <option value = "Neuquén">Neuquén</option>
-            <option value = "Río Negro">Río Negro</option>
-            <option value = "Salta">Salta</option>
-            <option value = "San Juan">San Juan</option>
-            <option value = "San Luis">San Luis</option>
-            <option value = "Santa Cruz">Santa Cruz</option>
-            <option value = "Santa Fe">Santa Fe</option>
-            <option value = "Santiago del Estero">Santiago del Estero</option>
-            <option value = "Tierra del Fuego">Tierra del Fuego</option>
-            <option value = "Tucumán">Tucumán</option>
-          </select>
+
+        <div class="acciones-form">
+          <button type="submit" class="btn-buscar">🔍 Buscar</button>
+          <button type="button" id="limpiar-filtros" class="btn-limpiar">Limpiar filtros</button>
         </div>
-        <!--Calendario-->
-        <div class = "datepicker-container">
-          <label for = "fecha-desde">Desde</label>
-          <input type = "date" id = "fecha-desde">
-        </div>
-        <div class = "datepicker-container">
-          <label for = "fecha-hasta">Hasta</label>
-          <input type = "date" id = "fecha-hasta">
-        </div>
-        <button type = "submit">🔍 Buscar</button>
+
       </form>
+
+      <section class="resultados-section">
+        <h3>Resultados</h3>
+        <div id="resultados-buscador" class="resultados-buscador">
+        </div>
+      </section>
+
     </div>
-  </div>
+  </main>
+  
+  <footer>
+    <p>© 2025 Catálogo de Recitales - Proyecto académico</p>
+  </footer>
+
+  <script src = 'script.js'></script>
 </body>
 </html>

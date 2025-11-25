@@ -22,7 +22,7 @@
     <nav>
       <div id = "menuHamburguesa">&#9776;</div>
       <ul>
-        <li><a href = "#" id = "abrirBuscador">Buscar</a></li>
+        <li><a href = "buscador.html">Buscar</a></li>
         <li><a href = "ticketeras.html">Ticketeras</a></li>
         <li><a href = "favoritos.html">Favoritos</a></li>
         <li><a href = "conciertos.html">Conciertos</a></li>
@@ -35,15 +35,17 @@
   </header>
   <main>
     <!-- Cartelera -->
-    <section class = "título-cartelera">
+    <section class="título-cartelera">
       <h2>Próximos eventos</h2>
-      <section class = "cartelera">
-      </section>
-      <div class = "dots"></div>
-    </section>
-  </main>
+      
+      <div id="cartelera" class="cartelera-slider"></div>
 
-  <div id = "cont-buscador"></div>
+      <button id="prev" class="slider-btn prev">‹</button>
+      <button id="next" class="slider-btn next">›</button>
+
+      <div id="cartelera-dots" class="dots"></div>
+    </section>
+   </main>
 
 <input type="checkbox" id="modal-toggle" class="modal-toggle" />
 <input type="checkbox" id="switch-form-toggle" class="modal-toggle" />
@@ -106,15 +108,6 @@
   <footer>
     <p>© 2025 Catálogo de Recitales - Proyecto académico</p>
   </footer>
-
-  <script>
-    fetch('buscador.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('cont-buscador').innerHTML = html;
-      })
-      .catch(err => console.log('Error al cargar el buscador; ', err));
-  </script>
 
   <script src = 'script.js'></script>
 </body>

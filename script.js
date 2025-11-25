@@ -1,7 +1,10 @@
-// ---CONFIGURACIÓN AIRTABLE---
-const token = "patJWZQqYXMTpShDC.0f14d4ce0548208e7d1e8dbc105c868c64803fdd0c5e3bccb39763a29d1868a0";
-const baseID = "appdhZ2FVCDUuj4YT";
-const baseUrl = `https://api.airtable.com/v0/${baseID}`;
+/* ---CONFIGURACIÓN AIRTABLE---
+import { AIRTABLE_TOKEN, BASE_ID } from "./env.js";*/
+  const token = "patJWZQqYXMTpShDC.0f14d4ce0548208e7d1e8dbc105c868c64803fdd0c5e3bccb39763a29d1868a0";
+  const baseID = "appdhZ2FVCDUuj4YT";
+  const baseUrl = `https://api.airtable.com/v0/${baseID}`;
+
+console.log(AIRTABLE_TOKEN);
 
 async function obtenerDatos(tabla) {
   try {
@@ -107,4 +110,185 @@ document.addEventListener("DOMContentLoaded", async () => {
       showSlide((currentIndex + 1) % slides.length);
     }, 4000);
   }
+});
+
+// ---FAVORITOS---
+function obtenerFavoritos() {
+  const favoritos = localStorage.getItem("favoritos");
+  return favoritos ? JSON.parse(favoritos) : [];
+}
+
+function guardarFavoritos(favoritos) {
+  localStorage.setItem("favoritos", JSON.stringify(favoritos));
+}
+
+function quitarDeFavoritos(id) {
+  const favoritos = obtenerFavoritos();
+  const filtrados = favoritos.filter(concierto => concierto.id !== id);
+  guardarFavoritos(filtrados);
+  mostrarFavoritos(); 
+}
+
+function mostrarFavoritos() {
+  const contenedor = document.getElementById("favoritosContainer");
+  const favoritos = obtenerFavoritos();
+
+  if (favoritos.length === 0) {
+    contenedor.innerHTML = `
+      <p class="mensaje-vacio">Todavía no agregaste nada a tus favoritos.<br></p>`;
+    return;
+  }
+
+  contenedor.innerHTML = favoritos
+    .map(concierto => `
+      <div class="card-favorito">
+        <img src="${concierto.imagen}" 
+             alt="${concierto.nombre}"
+             class="img-favorito"
+             data-id="${concierto.id}"
+        />
+
+        <div class="info-favorito">
+          <h3>${concierto.nombre}</h3>
+
+          <button class="btn-quitar" data-id="${concierto.id}">
+            Quitar de Favoritos
+          </button>
+        </div>
+      </div>
+    `)
+    .join("");
+
+  document.querySelectorAll(".btn-quitar").forEach(btn => {
+    btn.addEventListener("click", e => {
+      const id = e.target.dataset.id;
+      quitarDeFavoritos(id);
+    });
+  });
+
+  document.querySelectorAll(".img-favorito").forEach(img => {
+    img.addEventListener("click", e => {
+      const id = e.target.dataset.id;
+      window.location.href = `detalle.html?id=${id}`;
+    });
+  });
+}
+
+if (window.location.pathname.includes("favoritos.html")) {
+  document.addEventListener("DOMContentLoaded", mostrarFavoritos);
+}
+
+// ---CONCIERTOS---
+async function cargarConciertosEnPantalla() {
+  const grid = document.querySelector(".grid-conciertos");
+  const conciertos = await obtenerDatos("Conciertos");
+
+  grid.innerHTML = "";
+
+  conciertos.forEach(concierto => {
+    const imagen = concierto.fields.ImagenConcierto
+      ? concierto.fields.ImagenConcierto[0].url
+      : "ImagenesProyecto/placeholder.png";
+
+    const id = concierto.id;
+
+    const card = document.createElement("div");
+    card.classList.add("concierto-card");
+
+    card.innerHTML = `<img src="${imagen}" alt="${concierto.fields.NombreConcierto}" />`;
+
+    card.addEventListener("click", () => {
+      window.location.href = `detalle_concierto.html?id=${id}`;
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", cargarConciertosEnPantalla);
+
+// ---BUSCADOR---
+document.addEventListener("DOMContentLoaded", () => {
+  const formBuscador = document.getElementById("form-buscador");
+  const artistaInput = document.getElementById("artista");
+  const provinciaSelect = document.getElementById("provincia");
+  const fechaDesdeInput = document.getElementById("fecha-desde");
+  const fechaHastaInput = document.getElementById("fecha-hasta");
+  const resultadosDiv = document.getElementById("resultados-buscador");
+  const limpiarBtn = document.getElementById("limpiar-filtros");
+
+  async function buscarConciertos(event) {
+    if(event) event.preventDefault();
+    resultadosDiv.innerHTML = "";
+    const conciertos = await obtenerDatos("Conciertos");
+    const artistaFiltro = artistaInput.value.trim().toLowerCase();
+    const provinciaFiltro = provinciaSelect.value;
+    const fechaDesde = fechaDesdeInput.value;
+    const fechaHasta = fechaHastaInput.value;
+
+    if(fechaDesde && fechaHasta && fechaDesde > fechaHasta){
+      alert("La fecha desde no puede ser posterior a la fecha hasta");
+      return;
+    }
+
+    let resultados = conciertos.filter(c => {
+      const nombre = c.fields.NombreConcierto.toLowerCase();
+      const lugar = c.fields.Lugar;
+      const fecha = c.fields.Fecha;
+
+      const coincideArtista = artistaFiltro === "" || nombre.includes(artistaFiltro);
+      const coincideProvincia = provinciaFiltro === "todas" || lugar === provinciaFiltro;
+      const coincideFechaDesde = !fechaDesde || fecha >= fechaDesde;
+      const coincideFechaHasta = !fechaHasta || fecha <= fechaHasta;
+
+      return coincideArtista && coincideProvincia && coincideFechaDesde && coincideFechaHasta;
+    });
+
+    if(resultados.length === 0){
+      alert("No se encontraron resultados con los filtros aplicados");
+      return;
+    }
+
+    resultados.forEach(c => {
+      const div = document.createElement("div");
+      div.classList.add("resultado-card");
+      div.innerHTML = `
+        <img src="${c.fields.ImagenConcierto[0].url}" alt="${c.fields.NombreConcierto}" class="resultado-img">
+        <h4>${c.fields.NombreConcierto}</h4>
+        <p>${c.fields.Fecha} - ${c.fields.Lugar}</p>
+        <div class="resultado-actions">
+          <a href="${c.fields.Ticketera}" target="_blank" class="btn-comprar">Comprar Entradas</a>
+          <button class="btn-favorito">${esFavorito(c.id) ? "Quitar de Favoritos ❤️" : "Agregar a Favoritos 🤍"}</button>
+        </div>
+      `;
+      const btnFav = div.querySelector(".btn-favorito");
+      btnFav.addEventListener("click", () => toggleFavorito(c.id, btnFav));
+      resultadosDiv.appendChild(div);
+    });
+  }
+
+  function esFavorito(id){
+    const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+    return favoritos.includes(id);
+  }
+
+  function toggleFavorito(id, btn){
+    let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+    if(favoritos.includes(id)){
+      favoritos = favoritos.filter(f => f !== id);
+    } else {
+      favoritos.push(id);
+    }
+    localStorage.setItem("favoritos", JSON.stringify(favoritos));
+    btn.textContent = favoritos.includes(id) ? "Quitar de Favoritos" : "Agregar a Favoritos";
+  }
+
+  formBuscador.addEventListener("submit", buscarConciertos);
+  limpiarBtn.addEventListener("click", () => {
+    artistaInput.value = "";
+    provinciaSelect.value = "todas";
+    fechaDesdeInput.value = "";
+    fechaHastaInput.value = "";
+    resultadosDiv.innerHTML = "";
+  });
 });

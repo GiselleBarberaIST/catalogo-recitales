@@ -626,7 +626,104 @@ a:hover {
   transform: scale(1.2);
 }
 
+/* Contenedor general */
+.favoritos-usuario {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
 
+/* Card */
+.card-favorito {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #111;
+  padding: 15px;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+
+.card-favorito:hover {
+  transform: scale(1.05);
+}
+
+/* Imagen */
+.img-favorito {
+  width: 100%;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.img-favorito:hover {
+  transform: scale(1.07);
+}
+
+/* Info */
+.info-favorito {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.btn-quitar {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #b30000;
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.btn-quitar:hover {
+  background-color: #e60000;
+}
+
+.mensaje-vacio {
+  font-size: 1.2rem;
+  text-align: center;
+  color: #ccc;
+  margin-top: 40px;
+}
+
+/* --- GRID DE CONCIERTOS --- */
+.grid-conciertos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Tarjeta del concierto */
+.concierto-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+/* Efecto hover */
+.concierto-card:hover {
+  transform: scale(1.05);
+}
+
+/* Imagen */
+.concierto-card img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.concierto-card:hover img {
+  transform: scale(1.08);
+}
 
 @media screen and (max-width: 768px) {
   

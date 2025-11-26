@@ -48,5 +48,10 @@
         "ticketera": "Passline",
         "imagen": "LogosTicketeras/passline.png",
         "url": "https://home.passline.com/home"
+    },
+	{
+        "ticketera": "Articket",
+        "imagen": "LogosTicketeras/articket.png",
+        "url": "https://articket.com.ar/"
     }
 ]

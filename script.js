@@ -1,13 +1,13 @@
-/* ---CONFIGURACIÓN AIRTABLE---
-import { AIRTABLE_TOKEN, BASE_ID } from "./env.js";*/
-  const token = "patJWZQqYXMTpShDC.0f14d4ce0548208e7d1e8dbc105c868c64803fdd0c5e3bccb39763a29d1868a0";
-  const baseID = "appdhZ2FVCDUuj4YT";
-  const baseUrl = `https://api.airtable.com/v0/${baseID}`;
+/* ---CONFIGURACIÓN AIRTABLE--- */
+const token = "patJWZQqYXMTpShDC.0f14d4ce0548208e7d1e8dbc105c868c64803fdd0c5e3bccb39763a29d1868a0";
+const baseID = "appdhZ2FVCDUuj4YT";
+const baseUrl = `https://api.airtable.com/v0/${baseID}`;
 
+/* ---FUNCIONES GENERALES--- */
 async function obtenerDatos(tabla) {
   try {
     const res = await fetch(`${baseUrl}/${tabla}`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}`}
     });
     if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
     const data = await res.json();
@@ -19,50 +19,48 @@ async function obtenerDatos(tabla) {
   }
 }
 
-// ---PRUEBA DE CONEXIÓN---
+/* ---PRUEBA DE CONEXIÓN---
 document.addEventListener("DOMContentLoaded", async () => {
-  const conciertos = await obtenerDatos("Conciertos");
-  const ticketeras = await obtenerDatos("Ticketeras");
-});
+  await obtenerDatos("Conciertos");
+  await obtenerDatos("Ticketeras");
+});*/
 
-// ---MENÚ HAMBURGUESA---
+/* ---MENÚ HAMBURGUESA--- */
 const menuHamburguesa = document.getElementById('menuHamburguesa');
 const menuU1 = document.querySelector('header nav ul');
 
-menuHamburguesa.addEventListener('click', () => {
-  menuU1.classList.toggle('show');
-});
+if (menuHamburguesa && menuU1) {
+  menuHamburguesa.addEventListener('click', () => {
+    menuU1.classList.toggle('show');
+  });
+}
 
-// ---CARTELERA---
+/* ---CARTELERA--- */
 document.addEventListener("DOMContentLoaded", async () => {
-  const conciertos = await obtenerDatos("Conciertos");
-
   const cartelera = document.getElementById("cartelera");
+  if(!cartelera) return;
+
   const prevBtn = document.getElementById("prev");
   const nextBtn = document.getElementById("next");
   const dotsContainer = document.getElementById("cartelera-dots");
 
-  if (!cartelera) return;
-
-  const primeros6 = conciertos.slice(0,6);
+  const conciertos = await obtenerDatos("Conciertos");
+  const primeros6 = conciertos.slice(0, 6);
   let currentIndex = 0;
 
   primeros6.forEach((concierto, i) => {
     const urlImagen = concierto.fields.ImagenConcierto?.[0]?.url || "placeholder.png";
     const urlTicketera = concierto.fields.Ticketera || "#";
-
+    
     const card = document.createElement("div");
     card.className = "cardConcierto";
-    if(i === 0) card.classList.add("active");
+    if (i === 0) card.classList.add("active");
 
     const img = document.createElement("img");
     img.src = urlImagen;
     img.alt = concierto.fields.NombreConcierto || "Sin nombre";
 
-    // Imagen clickeable
-    img.addEventListener("click", () => {
-      window.open(urlTicketera, "_blank");
-    });
+    img.addEventListener("click", () => window.open(urlTicketera, "_blank"));
 
     card.appendChild(img);
     cartelera.appendChild(card);
@@ -93,6 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     showSlide((currentIndex - 1 + slides.length) % slides.length);
     resetAutoSlide();
   });
+
   nextBtn.addEventListener("click", () => {
     showSlide((currentIndex + 1) % slides.length);
     resetAutoSlide();
@@ -110,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// ---FAVORITOS---
+/* ---FAVORITOS--- */
 function obtenerFavoritos() {
   const favoritos = localStorage.getItem("favoritos");
   return favoritos ? JSON.parse(favoritos) : [];
@@ -120,63 +119,91 @@ function guardarFavoritos(favoritos) {
   localStorage.setItem("favoritos", JSON.stringify(favoritos));
 }
 
-function quitarDeFavoritos(id) {
-  const favoritos = obtenerFavoritos();
-  const filtrados = favoritos.filter(concierto => concierto.id !== id);
-  guardarFavoritos(filtrados);
-  mostrarFavoritos(); 
+async function obtenerConciertoPorId(id) {
+  try {
+    const res = await fetch (`${baseUrl}/Conciertos/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!res.ok) {
+      console.error(`Error al obtener concierto ${id}: `, res.status, res.statusText);
+      return null;
+    }
+
+    const data = await res.json();
+
+    return {
+      id: data.id,
+      nombre: data.fields.NombreConcierto || "Sin Nombre",
+      imagen: data.fields.ImagenConcierto?.[0]?.url || "placeholder.jpg"
+    };
+  } catch (error) {
+    console.error("Error al obtener concierto: ", error);
+    return null;
+  }
 }
 
-function mostrarFavoritos() {
-  const contenedor = document.getElementById("favoritosContainer");
+async function mostrarFavoritos() {
   const favoritos = obtenerFavoritos();
+  console.log("Favoritos guardados en LocalStorage: ", favoritos);
+
+  const contenedor = document.getElementById("favoritosContainer");
+  if (!contenedor) return;
 
   if (favoritos.length === 0) {
     contenedor.innerHTML = `
-      <p class="mensaje-vacio">Todavía no agregaste nada a tus favoritos.<br></p>`;
+    <p class="mensaje-vacio">
+      Todavía no agregaste nada a tus Favoritos. <br>
+    </p>`;
     return;
   }
 
-  contenedor.innerHTML = favoritos
-    .map(concierto => `
-      <div class="card-favorito">
-        <img src="${concierto.imagen}" 
-             alt="${concierto.nombre}"
-             class="img-favorito"
-             data-id="${concierto.id}"
-        />
+  contenedor.innerHTML = "<p>Cargando favoritos...</p>";
 
-        <div class="info-favorito">
-          <h3>${concierto.nombre}</h3>
+  let conciertos = await Promise.all(
+    favoritos.map(id => obtenerConciertoPorId(id))
+  );
 
-          <button class="btn-quitar" data-id="${concierto.id}">
-            Quitar de Favoritos
-          </button>
-        </div>
+  conciertos = conciertos.filter(c => c !== null);
+
+  contenedor.innerHTML = conciertos.map(concierto => `
+    <div class="card-favorito">
+      <img src="${concierto.imagen}"
+        alt="${concierto.nombre}"
+        class="img-favorito"
+        data-id="${concierto.id}" />
+      
+      <div class="info-favorito">
+        <h3>${concierto.nombre}</h3>
+
+        <button class="btn-quitar" data-id="${concierto.id}">
+          Quitar de Favoritos
+        </button>
       </div>
-    `)
-    .join("");
+    </div>
+  `).join("");
 
   document.querySelectorAll(".btn-quitar").forEach(btn => {
     btn.addEventListener("click", e => {
-      const id = e.target.dataset.id;
-      quitarDeFavoritos(id);
+      quitarDeFavoritos(e.target.dataset.id);
     });
   });
 
   document.querySelectorAll(".img-favorito").forEach(img => {
     img.addEventListener("click", e => {
-      const id = e.target.dataset.id;
-      window.location.href = `detalle.html?id=${id}`;
+      window.location.href = `detalle_concierto.html?id=${e.target.dataset.id}`;
     });
   });
 }
 
-if (window.location.pathname.includes("favoritos.html")) {
-  document.addEventListener("DOMContentLoaded", mostrarFavoritos);
+function quitarDeFavoritos(id) {
+  const favoritos = obtenerFavoritos();
+  const filtrados = favoritos.filter(favId => favId !== id);
+  guardarFavoritos(filtrados);
+  mostrarFavoritos();
 }
 
-// ---CONCIERTOS---
+/* ---CONCIERTOS--- */
 async function cargarConciertosEnPantalla() {
   const grid = document.querySelector(".grid-conciertos");
   const conciertos = await obtenerDatos("Conciertos");
@@ -205,7 +232,88 @@ async function cargarConciertosEnPantalla() {
 
 document.addEventListener("DOMContentLoaded", cargarConciertosEnPantalla);
 
-// ---BUSCADOR---
+/* ---DETALLE DEL CONCIERTO--- */
+document.addEventListener("DOMContentLoaded", async () => {
+  const contenedor = document.getElementById("detalleConcierto");
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (!id) {
+    contenedor.innerHTML = "<p>No se recibió un ID válido del concierto.</p>";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${baseUrl}/Conciertos/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
+
+    const data = await res.json();
+    const fields = data.fields;
+
+    const imagen = fields.ImagenConcierto?.[0]?.url || "ImagenesProyecto/placeholder.png";
+    const nombre = fields.NombreConcierto || "Concierto sin nombre";
+    const desc = fields.Descripción || "Descripción no disponible";
+    const ticket = fields.Ticketera || "#";
+
+    const favoritos = obtenerFavoritos();
+    let esFavorito = favoritos.includes(id);
+
+    contenedor.innerHTML = `
+      <div class="detalle-card">
+        <img class="detalle-img" src="${imagen}" alt="${nombre}" />
+        <h2 class="detalle-titulo">${nombre}</h2>
+        <p class="detalle-descripcion">${desc}</p>
+        <div class="detalle-botones">
+          <a href="${ticket}" target="_blank" class="btn-entradas">Comprar Entradas</a>
+          <button id="btnFavorito" class="btn-favorito">
+            ${esFavorito ? "Quitar de Favoritos" : "Agregar a Favoritos"}
+          </button>
+        </div>
+      </div>
+    `;
+
+const btnFavorito = document.getElementById("btnFavorito");
+
+    function actualizarBoton() {
+      if (esFavorito) {
+        btnFavorito.textContent = "Quitar de Favoritos";
+        btnFavorito.classList.remove("agregar");
+        btnFavorito.classList.add("quitar");
+      } else {
+        btnFavorito.textContent = "Agregar a Favoritos";
+        btnFavorito.classList.remove("quitar");
+        btnFavorito.classList.add("agregar");
+      }
+    }
+
+    actualizarBoton();
+
+    btnFavorito.addEventListener("click", () => {
+      let favoritosActualizados = obtenerFavoritos();
+
+      if (esFavorito) {
+        const index = favoritosActualizados.indexOf(id);
+        if (index > -1) favoritosActualizados.splice(index, 1);
+        esFavorito = false;
+      } else {
+        favoritosActualizados.push(id);
+        esFavorito = true;
+      }
+
+      guardarFavoritos(favoritosActualizados);
+      actualizarBoton();
+    });
+
+  } catch (error) {
+    console.error("Error al cargar el detalle del concierto:", error);
+    contenedor.innerHTML = "<p>No se pudo cargar el concierto. Intente nuevamente más tarde.</p>";
+  }
+});
+
+/* ---BUSCADOR--- */
 document.addEventListener("DOMContentLoaded", () => {
   const formBuscador = document.getElementById("form-buscador");
   const artistaInput = document.getElementById("artista");

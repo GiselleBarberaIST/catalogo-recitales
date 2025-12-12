@@ -26,19 +26,27 @@
         <li><a href = "ticketeras.html">Ticketeras</a></li>
         <li><a href = "favoritos.html">Favoritos</a></li>
         <li><a href = "conciertos.html">Conciertos</a></li>
-        <li><a href = "#">Cómo llegar</a></li>
       </ul>
     </nav>
   </header>
 <body>
-  <main class="detalle-container">
-      <img id="detalle-imagen" />
-      <h2 id="detalle-nombre"></h2>
-      <p id="detalle-descripcion"></p>
+  <main>
+    <section id = "detalleConcierto" class="detalle-concierto">
+      <div class = "detalle-card">
+        <img class = "detalle-img" src = "ImagenesProyecto/placeholder.png" alt = "Concierto">
 
-      <a id="detalle-ticketera" class="btn-comprar" target="_blank">Comprar Entradas</a>
-
-      <button id="btn-fav" class="btn-favorito"></button>
+        <div class="detalle-texto">
+          <h2 class="detalle-titulo">Título del Concierto</h2>
+          <p class="detalle-descripcion">
+            Descripción del concierto. Aquí va el contenido que se justifica y ocupa todo el ancho del contenedor, independiente del tamaño de la imagen.
+          </p>
+          <div class="detalle-botones">
+            <a href="#" target="_blank" class="btn-entradas">Comprar Entradas</a>
+            <button id="btnFavorito" class="btn-favorito agregar">Agregar a Favoritos</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
@@ -46,6 +54,5 @@
   </footer>
 
   <script src="script.js"></script>
-  <script src="detalle.js"></script>
 </body>
 </html>

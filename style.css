@@ -435,6 +435,92 @@ footer {
   box-shadow: 0 4px 15px rgba(0 , 0, 0, 0.4);
 }
 
+/* ---DETALLE CONCIERTOS--- */
+.detalle-concierto {
+  width: 100%;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.detalle-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 40px 0 0 0;
+}
+
+.detalle-texto {
+  width: 100%;
+}
+
+.detalle-titulo {
+  font-family: 'Metal Mania', cursive;
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.detalle-descripcion {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  text-align: justify;
+  width: 100%;
+}
+
+.detalle-img {
+  width: 100%;
+  max-width: 720px;
+  height: auto;
+  display: block;
+  margin: 20px 0;
+}
+
+.detalle-botones {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  margin-top: 15px; 
+}
+
+.btn-entradas,
+.btn-favorito {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family: 'Roboto', sans-serif;
+  text-decoration: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s;
+}
+
+.btn-entradas,
+.btn-favorito.agregar {
+  background: #222;
+  color: white;
+}
+
+.btn-favorito.quitar {
+  background: #e63946;
+  color: white;
+}
+
+.btn-entradas:hover,
+.btn-favorito.agregar:hover {
+  background: #555;
+}
+
+.btn-favorito.quitar:hover {
+  background: #ff3b5c;
+}
+
 @media screen and (max-width: 768px) {
   
   header nav {

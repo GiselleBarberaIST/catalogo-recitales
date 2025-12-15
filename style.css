@@ -58,6 +58,9 @@ header .logo img {
 }
 
 nav ul {
+  display: flex;
+  align-items: center;
+  gap: 15px;
   font-family: "Metal Mania", sans-serif, sans-serif;
   font-size: 1.5rem;
   list-style: none;
@@ -66,8 +69,9 @@ nav ul {
 }
 
 nav ul li {
-  display: inline;
-  margin: 10px;
+  margin: 0;
+  display: flex;
+  align-items: center;
 }
 
 nav ul li a {
@@ -226,6 +230,41 @@ footer {
 
 .btn-header:hover {
   color: #ff1744;
+}
+
+.auth-message {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.auth-message.error {
+  background-color: #3b0f14;
+  color: #ffb3b3;
+}
+
+.auth-message.success {
+  background-color: #0f3b1f;
+  color: #b3ffd1;
+}
+
+.hidden {
+  display: none;
+}
+
+.avatar-perfil {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.icono-perfil {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #menuHamburguesa {

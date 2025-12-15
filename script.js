@@ -19,11 +19,118 @@ async function obtenerDatos(tabla) {
   }
 }
 
+function generarIDUsuario() {
+  return "USR-" + Date.now();
+}
+
+function mostrarMensaje(texto, tipo = "error") {
+  const msg = document.getElementById("auth-message");
+  if (!msg) return;
+
+  msg.textContent = texto;
+  msg.className = `auth-message ${tipo}`;
+  msg.classList.remove("hidden");
+}
+
+async function usuarioExiste(usuario) {
+  const usuarios = await obtenerDatos("Usuarios");
+  const usuarioLower = usuario.toLowerCase();
+
+  return usuarios.some(u => {
+    const nombreUsuario = u.fields.NombreUsuario?.toLowerCase();
+    return nombreUsuario === usuarioLower;
+  });
+}
+
+async function emailExiste(email) {
+  const usuarios = await obtenerDatos("Usuarios");
+  const emailLower = email.toLowerCase();
+
+  return usuarios.some(u => {
+    const emailUsuario = u.fields.Email?.toLowerCase();
+    return emailUsuario === emailLower;
+  });
+}
+
+async function buscarUsuarioLogin(identificador, password) {
+  const usuarios = await obtenerDatos("Usuarios");
+
+  return usuarios.find(u => {
+    const fields = u.fields;
+
+    const email = fields.Email?.toLowerCase();
+    const nombreUsuario = fields.NombreUsuario?.toLowerCase();
+
+    const identificadorLower = identificador.toLowerCase();
+
+    const coincideUsuario = email === identificadorLower || nombreUsuario === identificadorLower;
+
+    return coincideUsuario && fields.Password === password;
+  });
+}
+
+function redirigirPagina(direccion0) {
+  setTimeout(() => window.location.href = direccion0, 1000);
+}
+
 /* ---PRUEBA DE CONEXIÓN---
 document.addEventListener("DOMContentLoaded", async () => {
   await obtenerDatos("Conciertos");
   await obtenerDatos("Ticketeras");
 });*/
+
+/* ---FUNCIÓN MAESTRA MANEJO SESIÓN--- */
+function mostrarIconoPerfil() {
+  const nav = document.querySelector("nav ul");
+  if(!nav || document.getElementById("perfil-usuario")) return;
+
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+  if (!usuario) return;
+
+  let contenidoPerfil = "👤";
+
+  if (
+    usuario.ImagenPerfil &&
+    Array.isArray(usuario.ImagenPerfil) &&
+    usuario.ImagenPerfil.length > 0
+  ) {
+    const urlImagen = usuario.ImagenPerfil[0].url;
+    contenidoPerfil = `
+      <img
+        src="${urlImagen}"
+        alt="Perfil"
+        class="avatar-perfil"
+      />
+    `;
+  }
+
+  const li = document.createElement("li");
+  li.id = "perfil-usuario";
+  li.innerHTML = `
+    <a href="perfil.html" title="Mi perfil">
+      ${contenidoPerfil}
+    </span>
+  `;
+
+  nav.appendChild(li);
+}
+
+function manejarSesionUI() {
+  const usuario = sessionStorage.getItem("usuarioLogueado");
+
+  const btnAuth = document.querySelector(".btn-header");
+  const linkFavoritos = document.querySelector('a[href="favoritos.html"]')?.parentElement;
+
+  if (usuario) {
+    if (btnAuth) btnAuth.style.display = "none";
+    if (linkFavoritos) linkFavoritos.style.display = "block";
+
+    mostrarIconoPerfil();
+  } else {
+    if (btnAuth) btnAuth.style.display = "inline-block";
+    if (linkFavoritos) linkFavoritos.style.display = "none";
+  }
+}
 
 /* ---MENÚ HAMBURGUESA--- */
 const menuHamburguesa = document.getElementById('menuHamburguesa');
@@ -34,6 +141,108 @@ if (menuHamburguesa && menuU1) {
     menuU1.classList.toggle('show');
   });
 }
+
+/* ---REGISTRO/LOGIN--- */
+async function crearUsuario(usuario) {
+  try {
+    const res = await fetch(`${baseUrl}/Usuarios`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        fields: usuario
+      })
+    });
+
+    if (!res.ok) throw new Error("Error al crear el Usuario");
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error al registrar usuario:", error);
+    return null;
+  }
+}
+
+const signupForm = document.querySelector(".signup-form");
+
+if (signupForm) {
+  signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const nombre = document.getElementById("nombre-signup").value.trim();
+    const apellido = document.getElementById("apellido-signup").value.trim();
+    const nombreUsuario = document.getElementById("nombreusuario-signup").value;
+    const email = document.getElementById("email-signup").value.trim();
+    const password = document.getElementById("password-signup").value;
+    const confirmPassword = document.getElementById("confirm-password-signup").value;
+
+    if (password !== confirmPassword) {
+      mostrarMensaje("Las contraseñas no coinciden");
+      return;
+    }
+
+    if (await usuarioExiste(usuario)) {
+      mostrarMensaje("Ese usuario ya se encuentra registrado");
+      return;
+    }
+
+    if (await emailExiste(email)) {
+      mostrarMensaje("Ese email ya está registrado");
+      return;
+    }
+
+    const nuevoUsuario = {
+      ID_Usuario: generarIDUsuario(),
+      Nombre: nombre,
+      Apellido: apellido,
+      NombreUsuario: nombreUsuario,
+      Email: email,
+      Password: password,
+    };
+
+    const resultado = await crearUsuario(nuevoUsuario);
+
+    if (resultado) {
+      sessionStorage.setItem("usuarioLogueado", JSON.stringify(nuevoUsuario));
+      mostrarMensaje("Registro exitoso", "success");
+      redirigirPagina("index.html");
+    }
+  });
+}
+
+const loginForm = document.querySelector(".login-form");
+
+if (loginForm) {
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const identificador = document.getElementById("login-identifier").value.trim();
+    const password = document.getElementById("password-login").value;
+
+    const usuario = await buscarUsuarioLogin(identificador, password);
+
+    if (!usuario) {
+      mostrarMensaje("Usuario o contraseña incorrectos");
+      return;
+    }
+
+    sessionStorage.setItem(
+      "usuarioLogueado",
+      JSON.stringify(usuario.fields)
+    );
+
+    mostrarMensaje("Sesión iniciada correctamente", "success");
+
+    redirigirPagina("index.html");
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  manejarSesionUI();
+});
 
 /* ---CARTELERA--- */
 document.addEventListener("DOMContentLoaded", async () => {

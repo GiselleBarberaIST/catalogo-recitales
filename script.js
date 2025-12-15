@@ -332,7 +332,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function buscarConciertos(event) {
     if(event) event.preventDefault();
+    mensajeFechaInv.style.display = "none";
+    mensajeSinResultados.style.display = "none";
+
     resultadosDiv.innerHTML = "";
+    
     const conciertos = await obtenerDatos("Conciertos");
     const artistaFiltro = artistaInput.value.trim().toLowerCase();
     const provinciaFiltro = provinciaSelect.value;
@@ -391,7 +395,15 @@ document.addEventListener("DOMContentLoaded", () => {
           </button>
         </div>
       `;
+
       const btnFav = div.querySelector(".btn-favorito");
+
+      if(esFavorito(c.id)) {
+        btnFav.classList.add("quitar");
+      } else {
+        btnFav.classList.add("agregar");
+      }
+
       btnFav.addEventListener("click", () => toggleFavorito(c.id, btnFav));
       resultadosDiv.appendChild(div);
     });
@@ -415,7 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.classList.remove("agregar");
       btn.classList.add("quitar");
     }
-    
+
     localStorage.setItem("favoritos", JSON.stringify(favoritos));
     btn.textContent = favoritos.includes(id) ? "Quitar de Favoritos" : "Agregar a Favoritos";
   }

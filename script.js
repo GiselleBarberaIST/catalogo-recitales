@@ -322,6 +322,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const fechaHastaInput = document.getElementById("fecha-hasta");
   const resultadosDiv = document.getElementById("resultados-buscador");
   const limpiarBtn = document.getElementById("limpiar-filtros");
+  const tituloResultados = document.querySelector(".resultados-section h3");
+  const mensajeSinResultados = document.getElementById("mensaje-sinresultados");
+  const mensajeFechaInv = document.getElementById("mensaje-fechainv");
+
+  tituloResultados.style.display = "none";
+  mensajeSinResultados.style.display = "none";
+  mensajeFechaInv.style.display = "none";
 
   async function buscarConciertos(event) {
     if(event) event.preventDefault();
@@ -333,7 +340,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const fechaHasta = fechaHastaInput.value;
 
     if(fechaDesde && fechaHasta && fechaDesde > fechaHasta){
-      alert("La fecha desde no puede ser posterior a la fecha hasta");
+      tituloResultados.style.display = "none";
+      mensajeFechaInv.textContent = "La fecha 'Desde' no puede ser posterior a la fecha 'Hasta'.";
+      mensajeFechaInv.style.display = "block";
       return;
     }
 
@@ -351,20 +360,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     if(resultados.length === 0){
-      alert("No se encontraron resultados con los filtros aplicados");
+      tituloResultados.style.display = "none";
+      mensajeSinResultados.textContent = "No se encontraron resultados con los filtros aplicados";
+      mensajeSinResultados.style.display = "block";
       return;
     }
+
+    tituloResultados.style.display = "block";
 
     resultados.forEach(c => {
       const div = document.createElement("div");
       div.classList.add("resultado-card");
       div.innerHTML = `
-        <img src="${c.fields.ImagenConcierto[0].url}" alt="${c.fields.NombreConcierto}" class="resultado-img">
+        <img src="${c.fields.ImagenConcierto[0].url}" 
+            alt="${c.fields.NombreConcierto}" 
+            class="resultado-img">
+
         <h4>${c.fields.NombreConcierto}</h4>
         <p>${c.fields.Fecha} - ${c.fields.Lugar}</p>
-        <div class="resultado-actions">
-          <a href="${c.fields.Ticketera}" target="_blank" class="btn-comprar">Comprar Entradas</a>
-          <button class="btn-favorito">${esFavorito(c.id) ? "Quitar de Favoritos ❤️" : "Agregar a Favoritos 🤍"}</button>
+
+        <div class="detalle-botones">
+          <a href="${c.fields.Ticketera}" 
+            target="_blank" 
+            class="btn-entradas">
+            Comprar Entradas
+          </a>
+
+          <button class="btn-favorito agregar">
+            ${esFavorito(c.id) ? "Quitar de Favoritos" : "Agregar a Favoritos"}
+          </button>
         </div>
       `;
       const btnFav = div.querySelector(".btn-favorito");
@@ -382,9 +406,16 @@ document.addEventListener("DOMContentLoaded", () => {
     let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
     if(favoritos.includes(id)){
       favoritos = favoritos.filter(f => f !== id);
+      btn.textContent = "Agregar a Favoritos";
+      btn.classList.remove("quitar");
+      btn.classList.add("agregar");
     } else {
       favoritos.push(id);
+      btn.textContent = "Quitar de Favoritos";
+      btn.classList.remove("agregar");
+      btn.classList.add("quitar");
     }
+    
     localStorage.setItem("favoritos", JSON.stringify(favoritos));
     btn.textContent = favoritos.includes(id) ? "Quitar de Favoritos" : "Agregar a Favoritos";
   }
@@ -396,5 +427,8 @@ document.addEventListener("DOMContentLoaded", () => {
     fechaDesdeInput.value = "";
     fechaHastaInput.value = "";
     resultadosDiv.innerHTML = "";
+    tituloResultados.style.display = "none";
+    mensajeFechaInv.style.display = "none";
+    mensajeSinResultados.style.display = "none";
   });
 });

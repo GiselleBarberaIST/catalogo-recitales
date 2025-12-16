@@ -292,7 +292,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     img.src = urlImagen;
     img.alt = concierto.fields.NombreConcierto || "Sin nombre";
 
-    img.addEventListener("click", () => window.open(urlTicketera, "_blank"));
+    img.addEventListener("click", () => {
+      window.location.href = `detalle_concierto.html?id=${concierto.id}`;
+    });
 
     card.appendChild(img);
     cartelera.appendChild(card);

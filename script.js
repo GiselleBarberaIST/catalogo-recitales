@@ -195,16 +195,16 @@ if (signupForm) {
       mostrarMensaje("Ese email ya está registrado");
       return;
     }
-
-    const nuevoUsuario = {
-        ID_Usuario: generarIDUsuario(),
-        Nombre: nombre,
-        Apellido: apellido,
-        NombreUsuario: nombreUsuario,
-        Email: email,
-        Password: password,
-    };
           
+    const nuevoUsuario = {
+      ID_Usuario: generarIDUsuario(),
+      Nombre: nombre,
+      Apellido: apellido,
+      NombreUsuario: nombreUsuario,
+      Email: email,
+      Password: password,
+    };
+
     const resultado = await crearUsuario(nuevoUsuario);
 
     if (resultado) {
@@ -249,6 +249,17 @@ if (loginForm) {
 
     mostrarMensaje("Sesión iniciada correctamente", "success");
     actualizarPagina();
+  });
+}
+
+const cerrarModalBtn = document.getElementById("cerrar-modal");
+const modalToggle = document.getElementById("modal-toggle");
+const switchFormToggle = document.getElementById("switch-form-toggle");
+
+if (cerrarModalBtn) {
+  cerrarModalBtn.addEventListener("click", () => {
+    modalToggle.checked = false;
+    switchFormToggle.checked = false;
   });
 }
 
@@ -649,7 +660,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  document.getElementById("perfil-usuario").textContent = `@${usuario.NombreUsuario}`;
+  document.getElementById("perfil-usuario").textContent = `${usuario.NombreUsuario}`;
   document.getElementById("perfil-nombre").textContent = usuario.Nombre;
   document.getElementById("perfil-apellido").textContent = usuario.Apellido;
   document.getElementById("perfil-email").textContent = usuario.Email;

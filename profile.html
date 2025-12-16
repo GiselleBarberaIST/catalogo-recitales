@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Recitales</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body data-page="perfil">
+  <header>
+    <div class = "logo">
+      <a href = "index.html">
+        <img src = "ImagenesProyecto/recitalapplogo.jpg" alt = "RecitalApp" />
+      </a>
+    </div>
+    <nav>
+      <div id = "menuHamburguesa">&#9776;</div>
+      <ul>
+        <li><a href = "buscador.html">Buscar</a></li>
+        <li><a href = "ticketeras.html">Ticketeras</a></li>
+        <li><a href = "favoritos.html">Favoritos</a></li>
+        <li><a href = "conciertos.html">Conciertos</a></li>
+        <li>
+          <label for = "modal-toggle" class = "btn-header">Registrarse / Inciar sesión</label> <!--Esto va a pasar a ser el icono del perfil una vez que haya una sesión iniciada-->
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <main class="perfil-container">
+    <h1>Mi perfil</h1>
+
+    <div class="perfil-datos">
+        <h2 id="perfil-usuario"></h2>
+        <p><strong>Nombre: </strong> <span id="perfil-nombre"></span></p>
+        <p><strong>Apellido: </strong> <span id="perfil-apellido"></span></p>
+        <p><strong>Email:</strong> <span id="perfil-email"></span></p>
+    </div>
+
+    <div class="perfil-acciones">
+        <button id="change-password-btn">Cambiar contraseña</button>
+        <button id="logout-btn">Cerrar sesión</button>
+        <button id="delete-user-btn" class="danger">Eliminar usuario</button>
+    </div>
+
+    <div id="change-password-section" class="hidden">
+        <hs>Cambiar contraseña</hs>
+
+        <input type="password" id="new-password" placeholder="Nueva contraseña"/>
+        <input type="password" id="confirm-new-password" placeholder="Confirmar nueva contraseña"/>
+
+        <button id="save-password-btn">Guardar contraseña</button>
+    </div>
+  </main>
+  
+  <footer>
+    <p>© 2025 Catálogo de Recitales - Proyecto académico</p>
+  </footer>
+  
+  <script type = "module" src = 'script.js'></script>
+</body>
+</html>

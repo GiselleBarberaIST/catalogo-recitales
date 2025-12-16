@@ -267,6 +267,23 @@ footer {
   justify-content: center;
 }
 
+/* ---PERFIL DE USUARIO--- */
+#change-password-section {
+  margin-top: 20px;
+}
+
+#change-password-section input {
+  display: block;
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+#perfil-usuario {
+  margin-bottom: 15px;
+  color: #6A0DAD;
+  font-size: 1.6rem;
+}
+
 #menuHamburguesa {
   display: none;
 }

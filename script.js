@@ -107,9 +107,9 @@ function mostrarIconoPerfil() {
   const li = document.createElement("li");
   li.id = "perfil-usuario";
   li.innerHTML = `
-    <a href="perfil.html" title="Mi perfil">
+    <a href="profile.html" title="Mi perfil">
       ${contenidoPerfil}
-    </span>
+    </a>
   `;
 
   nav.appendChild(li);
@@ -652,4 +652,91 @@ document.addEventListener("DOMContentLoaded", () => {
     mensajeFechaInv.style.display = "none";
     mensajeSinResultados.style.display = "none";
   });
+});
+
+/* ---PERFIL DE USUARIO--- */
+document.addEventListener("DOMContentLoaded", () => {
+  const esPerfil = document.body.dataset.page === "perfil";
+  if(!esPerfil) return;
+  
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+
+  if (!usuario) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  document.getElementById("perfil-usuario").textContent = `@${usuario.NombreUsuario}`;
+  document.getElementById("perfil-nombre").textContent = usuario.Nombre;
+  document.getElementById("perfil-apellido").textContent = usuario.Apellido;
+  document.getElementById("perfil-email").textContent = usuario.Email;
+});
+
+document.getElementById("logout-btn").addEventListener("click", () => {
+  sessionStorage.removeItem("usuarioLogueado");
+  window.location.href = "index.html";
+});
+
+document.getElementById("delete-user-btn").addEventListener("click", async () => {
+  if (!confirm("Esta acción es irreversible. ¿Deseás eliminar tu usuario?")) return;
+
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+  if (!usuario?.recordId) return;
+
+  await fetch(`${baseUrl}/Usuarios/${usuario.recordId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}`}
+  });
+
+  sessionStorage.removeItem("usuarioLogueado");
+  window.location.href = "index.html";
+});
+
+const btnChangePassword = document.getElementById("change-password-btn");
+const sectionChangePassword = document.getElementById("change-password-section");
+
+btnChangePassword.addEventListener("click", () => {
+  sectionChangePassword.classList.toggle("hidden");
+});
+
+document.getElementById("save-password-btn").addEventListener("click", async () => {
+  const nuevaPassword = document.getElementById("new-password").value.trim();
+  const confirmPassword = document.getElementById("confirm-new-password").value.trim();
+
+  if (!nuevaPassword || !confirmPassword) {
+    mostrarMensaje("Completá ambos campos");
+    return;
+  }
+
+  if (nuevaPassword !== confirmPassword) {
+    mostrarMensaje("Las contraseñas no coinciden");
+    return;
+  }
+
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+  if (!usuario?.recordId) return;
+
+  try {
+    const res = await fetch(`${baseUrl}/Usuarios/${usuario.recordId}`, {
+      method: "PATCH",
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        fields: {
+          Password: nuevaPassword
+        }
+      })
+    });
+
+    if (!res.ok) throw new Error("Error al actualizar contraseña");
+
+    mostrarMensaje("Contraseña actualizada correctamente", "success");
+
+    sectionChangePassword.classList.add("hidden");
+  } catch (error) {
+    console.error(error);
+    mostrarMensaje("No se pudo cambiar la contraseña");
+  }
 });

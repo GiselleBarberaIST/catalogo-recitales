@@ -26,6 +26,9 @@
         <li><a href = "ticketeras.html">Ticketeras</a></li>
         <li><a href = "favoritos.html">Favoritos</a></li>
         <li><a href = "conciertos.html">Conciertos</a></li>
+        <li>
+          <label for = "modal-toggle" class = "btn-header">Registrarse / Inciar sesión</label> <!--Esto va a pasar a ser el icono del perfil una vez que haya una sesión iniciada-->
+        </li>
       </ul>
     </nav>
   </header>
@@ -35,6 +38,68 @@
     </section>
     <section class = "ticketeras-principales"></section>
   </main>
+
+  <input type="checkbox" id="modal-toggle" class="modal-toggle" />
+  <input type="checkbox" id="switch-form-toggle" class="modal-toggle" />
+  <div class="modal">
+      <div class="modal-content">
+        <label for="modal-toggle" class="cerrar-X">&times;</label>
+
+        <div id="auth-message" class="auth-message hidden"></div>
+
+        <form action="#" method="post" class="formulario login-form">
+          <h2>Iniciar sesión</h2>
+
+          <label for="login-identifier">Email o nombre de Usuario</label>
+          <input type="text" id="login-identifier" name="login" placeholder="Ingresá tu email o nombre de usuario" required>
+
+          <label for="password-login">Contraseña</label>
+          <input type="password" id="password-login" name="password" placeholder="******" required>
+
+          <button type="submit">Iniciar sesión</button>
+
+          <div class="socialmedia-buttons">
+              <button type="button" class="google">Iniciá sesión con Google</button>
+              <button type="button" class="facebook">Iniciá sesión con Facebook</button>
+          </div>
+
+          <p class="switch-form">
+              ¿No tenés cuenta?
+              <label for="switch-form-toggle" class="switch-label">Registrate acá</label>
+          </p>
+        </form>
+
+        <form action="#" method="post" class="formulario signup-form">
+          <h2>Registrarse</h2>
+
+          <label for="nombre-signup">Nombre</label>
+          <input type="text" id="nombre-signup" name="nombre" placeholder="Nombre" required>
+
+          <label for="apellido-signup">Apellido</label>
+          <input type="text" id="apellido-signup" name="apellido" placeholder="Apellido" required>
+
+          <label for="nombreusuario-signup">Nombre de Usuario</label>
+          <input type="text" id="nombreusuario-signup" name="nombre de usuario" placeholder="Nombre de Usuario" required>
+
+          <label for="email-signup">Email</label>
+          <input type="email" id="email-signup" name="email" placeholder="Email" required>
+
+          <label for="password-signup">Contraseña</label>
+          <input type="password" id="password-signup" name="password" placeholder="******" required>
+
+          <label for="confirm-password-signup">Confirmar contraseña</label>
+          <input type="password" id="confirm-password-signup" name="confirm-password" placeholder="******"
+              required>
+
+          <button type="submit">Registrarse</button>
+
+          <p class="switch-form">
+              ¿Ya tenés cuenta?
+              <label for="switch-form-toggle" class="switch-label">Iniciar sesión</label>
+          </p>
+      </form>
+    </div>
+  </div>
 
   <footer>
     <p>© 2025 Catálogo de Recitales - Proyecto académico</p>

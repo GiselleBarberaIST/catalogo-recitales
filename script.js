@@ -715,3 +715,56 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+/* ---TICKETERAS--- */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const contenedorTicketeras = document.querySelector(".ticketeras-principales");
+  if (!contenedorTicketeras) return;
+
+  cargarTicketeras();
+});
+
+async function cargarTicketeras() {
+  try {
+    const res = await fetch(`${baseUrl}/Ticketeras`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) throw new Error("Error al obtener ticketeras");
+
+    const data = await res.json();
+    renderTicketeras(data.records);
+  } catch (error) {
+    console.error(error);
+    mostrarMensaje("No se pudieron cargar las ticketeras");
+  }
+}
+
+function renderTicketeras(ticketeras) {
+  const contenedor = document.querySelector(".ticketeras-principales");
+  contenedor.innerHTML = "";
+
+  ticketeras.forEach(ticketera => {
+    const { NombreTicketera, ImagenTicketera, URL_Ticketera } = ticketera.fields;
+
+    if (!ImagenTicketera || !URL_Ticketera) return;
+
+    const imagenUrl = ImagenTicketera[0].url;
+
+    const link = document.createElement("a");
+    link.href = URL_Ticketera;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.classList.add("ticketera-card");
+
+    const img = document.createElement("img");
+    img.src = imagenUrl;
+    img.alt = NombreTicketera;
+
+    link.appendChild(img);
+    contenedor.appendChild(link);
+  });
+}

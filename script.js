@@ -69,8 +69,10 @@ async function buscarUsuarioLogin(identificador, password) {
   });
 }
 
-function redirigirPagina(direccion0) {
-  setTimeout(() => window.location.href = direccion0, 1000);
+function actualizarPagina() {
+  const modal = document.getElementById("modal-toggle");
+  if (modal) modal.checked = false;
+  window.location.reload();
 }
 
 /* ---PRUEBA DE CONEXIÓN---
@@ -184,7 +186,7 @@ if (signupForm) {
       return;
     }
 
-    if (await usuarioExiste(usuario)) {
+    if (await usuarioExiste(nombreUsuario)) {
       mostrarMensaje("Ese usuario ya se encuentra registrado");
       return;
     }
@@ -195,20 +197,21 @@ if (signupForm) {
     }
 
     const nuevoUsuario = {
-      ID_Usuario: generarIDUsuario(),
-      Nombre: nombre,
-      Apellido: apellido,
-      NombreUsuario: nombreUsuario,
-      Email: email,
-      Password: password,
+        ID_Usuario: generarIDUsuario(),
+        Nombre: nombre,
+        Apellido: apellido,
+        NombreUsuario: nombreUsuario,
+        Email: email,
+        Password: password,
     };
-
+          
     const resultado = await crearUsuario(nuevoUsuario);
 
     if (resultado) {
+      nuevoUsuario.recordId = resultado.id;
       sessionStorage.setItem("usuarioLogueado", JSON.stringify(nuevoUsuario));
       mostrarMensaje("Registro exitoso", "success");
-      redirigirPagina("index.html");
+      actualizarPagina();
     }
   });
 }
@@ -229,14 +232,23 @@ if (loginForm) {
       return;
     }
 
+    const usuarioLogueado = {
+      ID_Usuario: usuario.fields.ID_Usuario,
+      Nombre: usuario.fields.Nombre,
+      Apellido: usuario.fields.Apellido,
+      NombreUsuario: usuario.fields.NombreUsuario,
+      Email: usuario.fields.Email,
+      Password: usuario.fields.Password,
+      recordId: usuario.id
+    };
+
     sessionStorage.setItem(
       "usuarioLogueado",
-      JSON.stringify(usuario.fields)
+      JSON.stringify(usuarioLogueado)
     );
 
     mostrarMensaje("Sesión iniciada correctamente", "success");
-
-    redirigirPagina("index.html");
+    actualizarPagina();
   });
 }
 
@@ -318,52 +330,37 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-/* ---FAVORITOS--- */
-function obtenerFavoritos() {
-  const favoritos = localStorage.getItem("favoritos");
-  return favoritos ? JSON.parse(favoritos) : [];
-}
-
-function guardarFavoritos(favoritos) {
-  localStorage.setItem("favoritos", JSON.stringify(favoritos));
-}
-
+/* ---MOSTRAR FAVORITOS--- */
 async function obtenerConciertoPorId(id) {
   try {
-    const res = await fetch (`${baseUrl}/Conciertos/${id}`, {
+    const res = await fetch(`${baseUrl}/Conciertos/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
     if (!res.ok) {
-      console.error(`Error al obtener concierto ${id}: `, res.status, res.statusText);
+      console.error(`Error al obtener concierto ${id}:`, res.status, res.statusText);
       return null;
     }
 
     const data = await res.json();
-
     return {
       id: data.id,
-      nombre: data.fields.NombreConcierto || "Sin Nombre",
+      nombre: data.fields.NombreConcierto || "Sin nombre",
       imagen: data.fields.ImagenConcierto?.[0]?.url || "placeholder.jpg"
     };
   } catch (error) {
-    console.error("Error al obtener concierto: ", error);
+    console.error("Error al obtener concierto:", error);
     return null;
   }
 }
 
 async function mostrarFavoritos() {
   const favoritos = obtenerFavoritos();
-  console.log("Favoritos guardados en LocalStorage: ", favoritos);
-
   const contenedor = document.getElementById("favoritosContainer");
   if (!contenedor) return;
 
   if (favoritos.length === 0) {
-    contenedor.innerHTML = `
-    <p class="mensaje-vacio">
-      Todavía no agregaste nada a tus Favoritos. <br>
-    </p>`;
+    contenedor.innerHTML = `<p class="mensaje-vacio">Todavía no agregaste nada a tus Favoritos.</p>`;
     return;
   }
 
@@ -377,14 +374,9 @@ async function mostrarFavoritos() {
 
   contenedor.innerHTML = conciertos.map(concierto => `
     <div class="card-favorito">
-      <img src="${concierto.imagen}"
-        alt="${concierto.nombre}"
-        class="img-favorito"
-        data-id="${concierto.id}" />
-      
+      <img src="${concierto.imagen}" alt="${concierto.nombre}" class="img-favorito" data-id="${concierto.id}" />
       <div class="info-favorito">
         <h3>${concierto.nombre}</h3>
-
         <button class="btn-quitar" data-id="${concierto.id}">
           Quitar de Favoritos
         </button>
@@ -393,9 +385,7 @@ async function mostrarFavoritos() {
   `).join("");
 
   document.querySelectorAll(".btn-quitar").forEach(btn => {
-    btn.addEventListener("click", e => {
-      quitarDeFavoritos(e.target.dataset.id);
-    });
+    btn.addEventListener("click", e => toggleFavorito(e.target.dataset.id, btn));
   });
 
   document.querySelectorAll(".img-favorito").forEach(img => {
@@ -405,11 +395,64 @@ async function mostrarFavoritos() {
   });
 }
 
-function quitarDeFavoritos(id) {
-  const favoritos = obtenerFavoritos();
-  const filtrados = favoritos.filter(favId => favId !== id);
-  guardarFavoritos(filtrados);
-  mostrarFavoritos();
+document.addEventListener("DOMContentLoaded", mostrarFavoritos);
+
+/* ---FAVORITOS POR USUARIO--- */
+function obtenerUsuarioLogueado() {
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+  return usuario || null;
+}
+
+function obtenerFavoritos() {
+  const usuario = obtenerUsuarioLogueado();
+  if (!usuario) return [];
+  const key = `favoritos_${usuario.ID_Usuario}`;
+  const favoritos = localStorage.getItem(key);
+  return favoritos ? JSON.parse(favoritos) : [];
+}
+
+function guardarFavoritos(favoritos) {
+  const usuario = obtenerUsuarioLogueado();
+  if (!usuario) return;
+  const key = `favoritos_${usuario.ID_Usuario}`;
+  localStorage.setItem(key, JSON.stringify(favoritos));
+}
+
+function esFavorito(id) {
+  return obtenerFavoritos().includes(id);
+}
+
+function toggleFavorito(id, btn) {
+  const usuario = obtenerUsuarioLogueado();
+  if (!usuario) {
+    mostrarMensaje("Debés iniciar sesión para agregar favoritos", "error");
+    const modalToggle = document.getElementById("modal-toggle");
+    if (modalToggle) modalToggle.checked = true;
+    return;
+  }
+
+  let favoritosActualizados = obtenerFavoritos();
+  if (favoritosActualizados.includes(id)) {
+    favoritosActualizados = favoritosActualizados.filter(favId => favId !== id);
+    mostrarMensaje("Concierto eliminado de Favoritos", "success");
+  } else {
+    favoritosActualizados.push(id);
+    mostrarMensaje("Concierto agregado a Favoritos", "success");
+  }
+
+  guardarFavoritos(favoritosActualizados);
+
+  if (btn) {
+    btn.textContent = favoritosActualizados.includes(id)
+      ? "Quitar de Favoritos"
+      : "Agregar a Favoritos";
+    btn.classList.toggle("agregar");
+    btn.classList.toggle("quitar");
+  }
+
+  if (document.getElementById("favoritosContainer")) {
+    mostrarFavoritos();
+  }
 }
 
 /* ---CONCIERTOS--- */
@@ -444,9 +487,10 @@ document.addEventListener("DOMContentLoaded", cargarConciertosEnPantalla);
 /* ---DETALLE DEL CONCIERTO--- */
 document.addEventListener("DOMContentLoaded", async () => {
   const contenedor = document.getElementById("detalleConcierto");
+  if (!contenedor) return;
+
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
-
   if (!id) {
     contenedor.innerHTML = "<p>No se recibió un ID válido del concierto.</p>";
     return;
@@ -456,7 +500,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const res = await fetch(`${baseUrl}/Conciertos/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
-
     if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
 
     const data = await res.json();
@@ -467,9 +510,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const desc = fields.Descripción || "Descripción no disponible";
     const ticket = fields.Ticketera || "#";
 
-    const favoritos = obtenerFavoritos();
-    let esFavorito = favoritos.includes(id);
-
     contenedor.innerHTML = `
       <div class="detalle-card">
         <img class="detalle-img" src="${imagen}" alt="${nombre}" />
@@ -477,44 +517,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         <p class="detalle-descripcion">${desc}</p>
         <div class="detalle-botones">
           <a href="${ticket}" target="_blank" class="btn-entradas">Comprar Entradas</a>
-          <button id="btnFavorito" class="btn-favorito">
-            ${esFavorito ? "Quitar de Favoritos" : "Agregar a Favoritos"}
+          <button id="btnFavorito" class="btn-favorito ${
+            esFavorito(id) ? "quitar" : "agregar"
+          }">
+            ${esFavorito(id) ? "Quitar de Favoritos" : "Agregar a Favoritos"}
           </button>
         </div>
       </div>
     `;
 
-const btnFavorito = document.getElementById("btnFavorito");
-
-    function actualizarBoton() {
-      if (esFavorito) {
-        btnFavorito.textContent = "Quitar de Favoritos";
-        btnFavorito.classList.remove("agregar");
-        btnFavorito.classList.add("quitar");
-      } else {
-        btnFavorito.textContent = "Agregar a Favoritos";
-        btnFavorito.classList.remove("quitar");
-        btnFavorito.classList.add("agregar");
-      }
+    const btnFavorito = document.getElementById("btnFavorito");
+    if (btnFavorito) {
+      btnFavorito.addEventListener("click", () => toggleFavorito(id, btnFavorito));
     }
-
-    actualizarBoton();
-
-    btnFavorito.addEventListener("click", () => {
-      let favoritosActualizados = obtenerFavoritos();
-
-      if (esFavorito) {
-        const index = favoritosActualizados.indexOf(id);
-        if (index > -1) favoritosActualizados.splice(index, 1);
-        esFavorito = false;
-      } else {
-        favoritosActualizados.push(id);
-        esFavorito = true;
-      }
-
-      guardarFavoritos(favoritosActualizados);
-      actualizarBoton();
-    });
 
   } catch (error) {
     console.error("Error al cargar el detalle del concierto:", error);
@@ -525,6 +540,8 @@ const btnFavorito = document.getElementById("btnFavorito");
 /* ---BUSCADOR--- */
 document.addEventListener("DOMContentLoaded", () => {
   const formBuscador = document.getElementById("form-buscador");
+  if (!formBuscador) return;
+
   const artistaInput = document.getElementById("artista");
   const provinciaSelect = document.getElementById("provincia");
   const fechaDesdeInput = document.getElementById("fecha-desde");
@@ -535,17 +552,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const mensajeSinResultados = document.getElementById("mensaje-sinresultados");
   const mensajeFechaInv = document.getElementById("mensaje-fechainv");
 
-  tituloResultados.style.display = "none";
-  mensajeSinResultados.style.display = "none";
-  mensajeFechaInv.style.display = "none";
+  function limpiarMensajes() {
+    if(tituloResultados) tituloResultados.style.display = "none";
+    if(mensajeSinResultados) mensajeSinResultados.style.display = "none";
+    if(mensajeFechaInv) mensajeFechaInv.style.display = "none";
+  }
 
   async function buscarConciertos(event) {
     if(event) event.preventDefault();
-    mensajeFechaInv.style.display = "none";
-    mensajeSinResultados.style.display = "none";
-
+    limpiarMensajes();
     resultadosDiv.innerHTML = "";
-    
+
     const conciertos = await obtenerDatos("Conciertos");
     const artistaFiltro = artistaInput.value.trim().toLowerCase();
     const provinciaFiltro = provinciaSelect.value;
@@ -553,39 +570,39 @@ document.addEventListener("DOMContentLoaded", () => {
     const fechaHasta = fechaHastaInput.value;
 
     if(fechaDesde && fechaHasta && fechaDesde > fechaHasta){
-      tituloResultados.style.display = "none";
-      mensajeFechaInv.textContent = "La fecha 'Desde' no puede ser posterior a la fecha 'Hasta'.";
-      mensajeFechaInv.style.display = "block";
+      if(mensajeFechaInv){
+        mensajeFechaInv.textContent = "La fecha 'Desde' no puede ser posterior a la fecha 'Hasta'.";
+        mensajeFechaInv.style.display = "block";
+      }
       return;
     }
 
-    let resultados = conciertos.filter(c => {
+    const resultados = conciertos.filter(c => {
       const nombre = c.fields.NombreConcierto.toLowerCase();
       const lugar = c.fields.Lugar;
       const fecha = c.fields.Fecha;
 
-      const coincideArtista = artistaFiltro === "" || nombre.includes(artistaFiltro);
-      const coincideProvincia = provinciaFiltro === "todas" || lugar === provinciaFiltro;
-      const coincideFechaDesde = !fechaDesde || fecha >= fechaDesde;
-      const coincideFechaHasta = !fechaHasta || fecha <= fechaHasta;
-
-      return coincideArtista && coincideProvincia && coincideFechaDesde && coincideFechaHasta;
+      return (artistaFiltro === "" || nombre.includes(artistaFiltro)) &&
+             (provinciaFiltro === "todas" || lugar === provinciaFiltro) &&
+             (!fechaDesde || fecha >= fechaDesde) &&
+             (!fechaHasta || fecha <= fechaHasta);
     });
 
     if(resultados.length === 0){
-      tituloResultados.style.display = "none";
-      mensajeSinResultados.textContent = "No se encontraron resultados con los filtros aplicados";
-      mensajeSinResultados.style.display = "block";
+      if(mensajeSinResultados){
+        mensajeSinResultados.textContent = "No se encontraron resultados con los filtros aplicados";
+        mensajeSinResultados.style.display = "block";
+      }
       return;
     }
 
-    tituloResultados.style.display = "block";
+    if(tituloResultados) tituloResultados.style.display = "block";
 
     resultados.forEach(c => {
       const div = document.createElement("div");
       div.classList.add("resultado-card");
       div.innerHTML = `
-        <img src="${c.fields.ImagenConcierto[0].url}" 
+        <img src="${c.fields.ImagenConcierto?.[0]?.url || 'placeholder.jpg'}"
             alt="${c.fields.NombreConcierto}" 
             class="resultado-img">
 
@@ -593,76 +610,42 @@ document.addEventListener("DOMContentLoaded", () => {
         <p>${c.fields.Fecha} - ${c.fields.Lugar}</p>
 
         <div class="detalle-botones">
-          <a href="${c.fields.Ticketera}" 
-            target="_blank" 
-            class="btn-entradas">
-            Comprar Entradas
-          </a>
-
-          <button class="btn-favorito agregar">
+          <a href="${c.fields.Ticketera}" target="_blank" class="btn-entradas">Comprar Entradas</a>
+          <button class="btn-favorito ${esFavorito(c.id) ? 'quitar' : 'agregar'}">
             ${esFavorito(c.id) ? "Quitar de Favoritos" : "Agregar a Favoritos"}
           </button>
         </div>
       `;
 
       const btnFav = div.querySelector(".btn-favorito");
+      if(btnFav) btnFav.addEventListener("click", () => toggleFavorito(c.id, btnFav));
 
-      if(esFavorito(c.id)) {
-        btnFav.classList.add("quitar");
-      } else {
-        btnFav.classList.add("agregar");
-      }
-
-      btnFav.addEventListener("click", () => toggleFavorito(c.id, btnFav));
       resultadosDiv.appendChild(div);
     });
   }
 
-  function esFavorito(id){
-    const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-    return favoritos.includes(id);
-  }
-
-  function toggleFavorito(id, btn){
-    let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-    if(favoritos.includes(id)){
-      favoritos = favoritos.filter(f => f !== id);
-      btn.textContent = "Agregar a Favoritos";
-      btn.classList.remove("quitar");
-      btn.classList.add("agregar");
-    } else {
-      favoritos.push(id);
-      btn.textContent = "Quitar de Favoritos";
-      btn.classList.remove("agregar");
-      btn.classList.add("quitar");
-    }
-
-    localStorage.setItem("favoritos", JSON.stringify(favoritos));
-    btn.textContent = favoritos.includes(id) ? "Quitar de Favoritos" : "Agregar a Favoritos";
-  }
-
   formBuscador.addEventListener("submit", buscarConciertos);
-  limpiarBtn.addEventListener("click", () => {
-    artistaInput.value = "";
-    provinciaSelect.value = "todas";
-    fechaDesdeInput.value = "";
-    fechaHastaInput.value = "";
-    resultadosDiv.innerHTML = "";
-    tituloResultados.style.display = "none";
-    mensajeFechaInv.style.display = "none";
-    mensajeSinResultados.style.display = "none";
-  });
+
+  if(limpiarBtn){
+    limpiarBtn.addEventListener("click", () => {
+      artistaInput.value = "";
+      provinciaSelect.value = "todas";
+      fechaDesdeInput.value = "";
+      fechaHastaInput.value = "";
+      resultadosDiv.innerHTML = "";
+      limpiarMensajes();
+    });
+  }
 });
 
 /* ---PERFIL DE USUARIO--- */
 document.addEventListener("DOMContentLoaded", () => {
   const esPerfil = document.body.dataset.page === "perfil";
-  if(!esPerfil) return;
-  
-  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+  if (!esPerfil) return;
 
+  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
   if (!usuario) {
-    window.location.href = "index.html";
+    console.warn("No hay usuario en sessionStorage");
     return;
   }
 
@@ -670,73 +653,65 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("perfil-nombre").textContent = usuario.Nombre;
   document.getElementById("perfil-apellido").textContent = usuario.Apellido;
   document.getElementById("perfil-email").textContent = usuario.Email;
-});
 
-document.getElementById("logout-btn").addEventListener("click", () => {
-  sessionStorage.removeItem("usuarioLogueado");
-  window.location.href = "index.html";
-});
-
-document.getElementById("delete-user-btn").addEventListener("click", async () => {
-  if (!confirm("Esta acción es irreversible. ¿Deseás eliminar tu usuario?")) return;
-
-  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
-  if (!usuario?.recordId) return;
-
-  await fetch(`${baseUrl}/Usuarios/${usuario.recordId}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}`}
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    sessionStorage.removeItem("usuarioLogueado");
+    window.location.href = "index.html";
   });
 
-  sessionStorage.removeItem("usuarioLogueado");
-  window.location.href = "index.html";
-});
+  document.getElementById("delete-user-btn").addEventListener("click", async () => {
+    const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
+    if (!usuario?.recordId) { mostrarMensaje("Usuario inválido"); return; }
+    if (!confirm("Esta acción es irreversible. ¿Deseás eliminar tu usuario?")) return;
 
-const btnChangePassword = document.getElementById("change-password-btn");
-const sectionChangePassword = document.getElementById("change-password-section");
+    try {
+      const res = await fetch(`${baseUrl}/Usuarios/${usuario.recordId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("No se pudo eliminar el usuario");
 
-btnChangePassword.addEventListener("click", () => {
-  sectionChangePassword.classList.toggle("hidden");
-});
+      sessionStorage.removeItem("usuarioLogueado");
+      window.location.href = "index.html";
+    } catch (error) {
+      console.error(error);
+      mostrarMensaje("Error al eliminar usuario");
+    }
+  });
 
-document.getElementById("save-password-btn").addEventListener("click", async () => {
-  const nuevaPassword = document.getElementById("new-password").value.trim();
-  const confirmPassword = document.getElementById("confirm-new-password").value.trim();
+  const btnChangePassword = document.getElementById("change-password-btn");
+  const sectionChangePassword = document.getElementById("change-password-section");
 
-  if (!nuevaPassword || !confirmPassword) {
-    mostrarMensaje("Completá ambos campos");
-    return;
-  }
+  btnChangePassword.addEventListener("click", () => {
+    sectionChangePassword.classList.toggle("hidden");
+  });
 
-  if (nuevaPassword !== confirmPassword) {
-    mostrarMensaje("Las contraseñas no coinciden");
-    return;
-  }
+  document.getElementById("save-password-btn").addEventListener("click", async () => {
+    const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado")); // Instanciar dentro del listener
+    if (!usuario?.recordId) { mostrarMensaje("Usuario inválido"); return; }
 
-  const usuario = JSON.parse(sessionStorage.getItem("usuarioLogueado"));
-  if (!usuario?.recordId) return;
+    const nuevaPassword = document.getElementById("new-password").value.trim();
+    const confirmPassword = document.getElementById("confirm-new-password").value.trim();
 
-  try {
-    const res = await fetch(`${baseUrl}/Usuarios/${usuario.recordId}`, {
-      method: "PATCH",
-      headers: { 
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        fields: {
-          Password: nuevaPassword
-        }
-      })
-    });
+    if (!nuevaPassword || !confirmPassword) { mostrarMensaje("Completá ambos campos"); return; }
+    if (nuevaPassword !== confirmPassword) { mostrarMensaje("Las contraseñas no coinciden"); return; }
 
-    if (!res.ok) throw new Error("Error al actualizar contraseña");
+    try {
+      const res = await fetch(`${baseUrl}/Usuarios/${usuario.recordId}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ fields: { Password: nuevaPassword } })
+      });
+      if (!res.ok) throw new Error("Error al actualizar contraseña");
 
-    mostrarMensaje("Contraseña actualizada correctamente", "success");
-
-    sectionChangePassword.classList.add("hidden");
-  } catch (error) {
-    console.error(error);
-    mostrarMensaje("No se pudo cambiar la contraseña");
-  }
+      mostrarMensaje("Contraseña actualizada correctamente", "success");
+      sectionChangePassword.classList.add("hidden");
+    } catch (error) {
+      console.error(error);
+      mostrarMensaje("No se pudo cambiar la contraseña");
+    }
+  });
 });
